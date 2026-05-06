@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes pulse-slow {
+    0%, 100% {
+        box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 18px rgba(59, 130, 246, 0.8);
+    }
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 2.5s ease-in-out infinite;
+}
+
+/* =========================
+   HUD TITLE STYLE
+========================= */
+
+.hud-title {
+    position: relative;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.08em;
+
+    /* Light mode */
+    color: #1f2937;
+
+    /* Smooth transition */
+    transition: all 0.3s ease;
+}
+
+.dark .hud-title {
+    color: #7dd3fc; /* soft cyan */
+    
+    /* Glow effect */
+    text-shadow:
+        0 0 6px rgba(56, 189, 248, 0.6),
+        0 0 12px rgba(56, 189, 248, 0.4),
+        0 0 18px rgba(56, 189, 248, 0.2);
+}
+
+
+.dark .hud-title::after {
+    opacity: 1;
+}
+
+/* Optional pulse animation */
+@keyframes hud-pulse {
+    0%, 100% {
+        text-shadow:
+            0 0 6px rgba(56,189,248,0.6),
+            0 0 12px rgba(56,189,248,0.4);
+    }
+    50% {
+        text-shadow:
+            0 0 10px rgba(56,189,248,0.9),
+            0 0 20px rgba(56,189,248,0.6);
+    }
+}
+
+.dark .hud-title.animate-hud {
+    animation: hud-pulse 2.5s infinite ease-in-out;
+}
