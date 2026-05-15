@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\FlightSession;
 use App\Models\DssResult;
 use App\Models\SystemSetting;
+use App\Models\User;
+use App\Notifications\FlightSessionCompletedNotification;
 
 class FlightSessionController extends Controller
 {
@@ -230,6 +232,7 @@ class FlightSessionController extends Controller
             ], 404);
         }
 
+        $wasAlreadyCompleted = ! is_null($session->end_time);
         $endTime = now();
         $startTime = \Carbon\Carbon::parse($session->start_time ?? $session->created_at);
         $duration = $startTime->diffInSeconds($endTime);
@@ -240,6 +243,17 @@ class FlightSessionController extends Controller
         ]);
 
         $dssResult = $this->calculateDssResult($session);
+
+        if (! $wasAlreadyCompleted) {
+            $session->load(['user', 'dssResult']);
+
+            User::where('role', 'admin')
+                ->get()
+                ->push($session->user)
+                ->filter()
+                ->unique('id')
+                ->each(fn (User $user) => $user->notify(new FlightSessionCompletedNotification($session)));
+        }
 
         return response()->json([
             'status' => 'success',

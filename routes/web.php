@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PilotSelectionController;
 
 Route::get('/', function () {
@@ -40,6 +41,9 @@ Route::middleware(['auth', 'verified', 'nocache'])->group(function () {
 
     Route::delete('/profile/photo', [ProfileController::class, 'deletePhoto'])
         ->name('profile.photo.delete');
+
+    Route::post('/notifications/flight-sessions/read', [NotificationController::class, 'markFlightSessionsAsRead'])
+        ->name('notifications.flight-sessions.read');
 
     Route::get('/pilot-selection', [PilotSelectionController::class, 'index'])
         ->name('pilot-selection.index');

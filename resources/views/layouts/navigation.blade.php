@@ -40,6 +40,103 @@
                     <span id="theme-icon" class="inline-block transition-transform duration-500">🌙</span>
                 </button>
 
+                <x-dropdown align="right" width="w-80" contentClasses="py-0">
+                    <x-slot name="trigger">
+                        <button id="flight-session-notification-button"
+                            type="button"
+                            onclick="fetch('{{ route('notifications.flight-sessions.read') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content'),
+                                    'Accept': 'application/json'
+                                }
+                            }).then(() => {
+                                const badge = document.getElementById('flight-session-notification-badge');
+                                if (badge) {
+                                    badge.textContent = '0';
+                                    badge.classList.add('hidden');
+                                }
+                            });"
+                            class="relative mr-4 w-10 h-10 flex items-center justify-center rounded-lg
+                                bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100
+                                hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none transition-all duration-300"
+                            aria-label="Completed flight session notifications">
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a3 3 0 11-5.714 0" />
+                            </svg>
+
+                            <span id="flight-session-notification-badge"
+                                class="{{ $unreadFlightSessionNotificationCount > 0 ? '' : 'hidden' }} absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-red-600 text-white text-xs font-semibold leading-5 text-center shadow">
+                                {{ $unreadFlightSessionNotificationCount }}
+                            </span>
+                        </button>
+                    </x-slot>
+
+                    <x-slot name="content">
+                        <div class="w-80 overflow-hidden">
+                            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Completed Flight Sessions</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Latest session activity</p>
+                            </div>
+
+                            <div class="max-h-96 overflow-y-auto">
+                                @forelse($flightSessionNotifications as $notification)
+                                    @php
+                                        $data = $notification->data;
+                                        $sessionId = $data['flight_session_id'] ?? null;
+                                        $completedAt = ! empty($data['completed_at'])
+                                            ? \Carbon\Carbon::parse($data['completed_at'])->diffForHumans()
+                                            : null;
+                                    @endphp
+
+                                    @if($sessionId)
+                                        <a href="{{ route('flight-sessions.show', $sessionId) }}"
+                                            class="block px-4 py-3 border-b border-gray-100 dark:border-gray-700/70 hover:bg-gray-100 dark:hover:bg-gray-700/70 transition">
+                                            <div class="flex items-start justify-between gap-3">
+                                                <div class="min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                                        {{ auth()->user()->role === 'admin' ? ($data['pilot_name'] ?? 'Unknown pilot') : 'Your flight session' }}
+                                                    </p>
+                                                    <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">
+                                                        Session #{{ $sessionId }}
+                                                        @if(! empty($data['aircraft_type']))
+                                                            · {{ $data['aircraft_type'] }}
+                                                        @endif
+                                                    </p>
+                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                        @if(isset($data['duration_sec']))
+                                                            {{ $data['duration_sec'] }} sec
+                                                        @endif
+                                                        @if(! empty($data['pass_fail']))
+                                                            · {{ $data['pass_fail'] }}
+                                                        @endif
+                                                        @if(isset($data['total_score']))
+                                                            · Score {{ $data['total_score'] }}
+                                                        @endif
+                                                    </p>
+                                                </div>
+
+                                                <div class="shrink-0 text-right">
+                                                    @if(is_null($notification->read_at))
+                                                        <span class="inline-block h-2 w-2 rounded-full bg-sky-500"></span>
+                                                    @endif
+                                                    @if($completedAt)
+                                                        <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 whitespace-nowrap">{{ $completedAt }}</p>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </a>
+                                    @endif
+                                @empty
+                                    <div class="px-4 py-6 text-center">
+                                        <p class="text-sm text-gray-600 dark:text-gray-300">No completed flight sessions yet.</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </x-slot>
+                </x-dropdown>
+
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="h-10 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800 
