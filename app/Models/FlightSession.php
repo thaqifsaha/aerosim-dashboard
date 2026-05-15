@@ -36,4 +36,22 @@ class FlightSession extends Model
         return $this->hasMany(FlightData::class);
     }
 
+    public function getFormattedDurationAttribute(): string
+    {
+        return self::formatDuration($this->duration_sec);
+    }
+
+    public static function formatDuration(int|float|null $seconds): string
+    {
+        if ($seconds === null) {
+            return '-';
+        }
+
+        $totalMinutes = intdiv((int) floor($seconds), 60);
+        $hours = intdiv($totalMinutes, 60);
+        $minutes = $totalMinutes % 60;
+
+        return "{$hours}h {$minutes}m";
+    }
+
 }

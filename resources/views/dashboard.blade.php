@@ -131,7 +131,7 @@
                                     <tr>
                                         <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Session ID</th>
                                         <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Flight Date</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Duration (sec)</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Duration</th>
                                         <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Aircraft Type</th>
                                         <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Total Score</th>
                                         <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Result</th>
@@ -143,7 +143,7 @@
                                         <tr class="border-t border-gray-200 dark:border-gray-700">
                                             <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $session->id }}</td>
                                             <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $session->flight_date ?? '-' }}</td>
-                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $session->duration_sec ?? '-' }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $session->formatted_duration }}</td>
                                             <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $session->aircraft_type ?? '-' }}</td>
                                             <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $session->dssResult->total_score ?? 'N/A' }}</td>
                                             <td class="px-4 py-3 text-sm">

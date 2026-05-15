@@ -65,7 +65,7 @@
                         <p><strong>Session ID:</strong> <span class="font-mono">{{ $session->id }}</span></p>
 
                         <p><strong>Flight Date:</strong> <span class="font-mono">{{ \Carbon\Carbon::parse($session->flight_date)->format('d/m/y') }}</span></p>
-                        <p><strong>Duration:</strong> <span class="font-mono">{{ $session->duration_sec }}</span> sec</p>
+                        <p><strong>Duration:</strong> <span class="font-mono">{{ $session->formatted_duration }}</span></p>
 
                         <p><strong>Start Time:</strong> <span class="font-mono">{{ \Carbon\Carbon::parse($session->start_time)->format('H:i:s') }}</span></p>
                         <p><strong>End Time:</strong> <span class="font-mono">{{ \Carbon\Carbon::parse($session->end_time)->format('H:i:s') }}</span></p>

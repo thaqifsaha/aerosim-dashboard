@@ -105,7 +105,7 @@
                                                     </p>
                                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                                         @if(isset($data['duration_sec']))
-                                                            {{ $data['duration_sec'] }} sec
+                                                            {{ \App\Models\FlightSession::formatDuration($data['duration_sec']) }}
                                                         @endif
                                                         @if(! empty($data['pass_fail']))
                                                             · {{ $data['pass_fail'] }}
