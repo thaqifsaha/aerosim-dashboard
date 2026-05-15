@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\FlightSession;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -53,5 +54,17 @@ class User extends Authenticatable
     public function flightSessions()
     {
         return $this->hasMany(FlightSession::class);
+    }
+
+    public function getProfilePhotoUrlAttribute(): ?string
+    {
+        if (
+            blank($this->profile_photo) ||
+            ! Storage::disk('public')->exists($this->profile_photo)
+        ) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->profile_photo);
     }
 }

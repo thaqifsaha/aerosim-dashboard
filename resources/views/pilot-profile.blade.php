@@ -20,8 +20,8 @@
 
                 {{-- Pilot Info Card --}}
                 <div class="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg sm:rounded-xl p-6 h-full flex items-center gap-6 transition">
-                    @if($pilot->profile_photo)
-                        <img src="{{ asset('storage/' . $pilot->profile_photo) }}"
+                    @if($pilot->profile_photo_url)
+                        <img src="{{ $pilot->profile_photo_url }}"
                             id="profileImage"
                             class="w-32 h-32 rounded-full object-cover object-center shadow-md cursor-pointer hover:scale-105 transition">
                     @else
