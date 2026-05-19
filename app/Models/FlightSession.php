@@ -23,7 +23,7 @@ class FlightSession extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     public function dssResult()
@@ -34,6 +34,11 @@ class FlightSession extends Model
     public function flightData()
     {
         return $this->hasMany(FlightData::class);
+    }
+
+    public function linkedSchedule()
+    {
+        return $this->hasOne(FlightSchedule::class, 'related_flight_session_id');
     }
 
     public function getFormattedDurationAttribute(): string

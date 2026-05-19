@@ -7,6 +7,7 @@ use App\Models\FlightSession;
 use App\Models\DssResult;
 use App\Models\SystemSetting;
 use App\Models\User;
+use App\Models\FlightSchedule;
 use App\Notifications\FlightSessionCompletedNotification;
 
 class FlightSessionController extends Controller
@@ -246,6 +247,17 @@ class FlightSessionController extends Controller
 
         if (! $wasAlreadyCompleted) {
             $session->load(['user', 'dssResult']);
+
+            FlightSchedule::query()
+                ->where('user_id', $session->user_id)
+                ->where('status', 'upcoming')
+                ->whereDate('scheduled_date', \Carbon\Carbon::parse($session->flight_date)->toDateString())
+                ->orderBy('scheduled_time')
+                ->first()
+                ?->update([
+                    'status' => 'completed',
+                    'related_flight_session_id' => $session->id,
+                ]);
 
             User::where('role', 'admin')
                 ->get()

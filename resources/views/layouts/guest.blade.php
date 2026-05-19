@@ -37,11 +37,21 @@
 
             {{-- Dark / Light Toggle --}}
             <button 
+                id="guest-theme-toggle"
                 type="button"
                 @click="
                     darkMode = !darkMode;
                     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
                     document.documentElement.classList.toggle('dark', darkMode);
+                    const icon = document.getElementById('guest-theme-icon');
+                    if (icon) {
+                        icon.classList.add('rotate-180', 'scale-75');
+                        setTimeout(() => {
+                            icon.textContent = darkMode ? '☀️' : '🌙';
+                            icon.classList.remove('rotate-180', 'scale-75');
+                            icon.classList.add('rotate-0', 'scale-100');
+                        }, 150);
+                    }
                 "
                 class="absolute top-6 right-6 z-20
                     w-11 h-11 rounded-xl
@@ -50,8 +60,7 @@
                     flex items-center justify-center
                     hover:scale-105 transition"
             >
-                <span x-show="!darkMode">🌙</span>
-                <span x-show="darkMode">☀️</span>
+                <span id="guest-theme-icon" class="inline-block transition-transform duration-500" x-text="darkMode ? '☀️' : '🌙'"></span>
             </button>
 
             <img src="/images/plane-outline.png"

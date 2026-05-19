@@ -21,7 +21,15 @@ class DashboardController extends Controller
         $activePilot = \App\Models\SystemSetting::with('activePilot')->first()?->activePilot;
 
         if ($user->role === 'admin') {
+            $search = trim((string) $request->input('search', ''));
+
             $pilotCards = \App\Models\User::where('role', 'pilot')
+                ->when($search !== '', function ($query) use ($search) {
+                    $query->where(function ($subQuery) use ($search) {
+                        $subQuery->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
+                })
                 ->with(['flightSessions.dssResult'])
                 ->get()
                 ->map(function ($pilot) {
@@ -42,6 +50,7 @@ class DashboardController extends Controller
             return view('dashboard', [
                 'activePilot' => $activePilot,
                 'pilotCards' => $pilotCards,
+                'search' => $search,
                 'isAdmin' => true,
             ]);
         }
@@ -175,6 +184,22 @@ class DashboardController extends Controller
             'scoreTrend',
             'trend'
         ));
+    }
+
+    public function deactivatePilot(User $pilot)
+    {
+        abort_unless(auth()->user()->role === 'admin', 403);
+        abort_unless($pilot->role === 'pilot', 404);
+        abort_if(auth()->id() === $pilot->id, 403);
+
+        \App\Models\SystemSetting::where('active_pilot_id', $pilot->id)
+            ->update(['active_pilot_id' => null]);
+
+        $pilot->delete();
+
+        return redirect()
+            ->route('dashboard')
+            ->with('success', 'Pilot account deactivated successfully.');
     }
 
     public function report($id)

@@ -19,7 +19,20 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
 
                 {{-- Pilot Info Card --}}
-                <div class="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg sm:rounded-xl p-6 h-full flex items-center gap-6 transition">
+                <div class="relative bg-white/80 dark:bg-white/5 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg sm:rounded-xl p-6 h-full transition">
+                    @if(auth()->user()->role === 'admin')
+                        <form method="POST" action="{{ route('pilots.deactivate', $pilot) }}"
+                            onsubmit="return confirm('Deactivate this pilot account? The pilot will no longer be able to sign in, but historical records will be preserved.');"
+                            class="mb-4 flex justify-end sm:absolute sm:right-6 sm:top-6 sm:mb-0">
+                            @csrf
+                            @method('DELETE')
+                            <button class="px-4 py-2 text-sm font-medium tracking-wide bg-red-600 hover:bg-red-700 text-white rounded transition">
+                                Deactivate
+                            </button>
+                        </form>
+                    @endif
+
+                    <div class="flex w-full items-center gap-6 sm:pr-32">
                     @if($pilot->profile_photo_url)
                         <img src="{{ $pilot->profile_photo_url }}"
                             id="profileImage"
@@ -56,6 +69,7 @@
                                 {{ $trend }}
                             </span>
                         </p>
+                    </div>
                     </div>
                 </div>
                 <!-- IMAGE PREVIEW MODAL -->
@@ -163,8 +177,8 @@
                 @if($sessions->isEmpty())
                     <p class="text-gray-600 dark:text-gray-300">No flight sessions found.</p>
                 @else
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div class="overflow-x-auto rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                        <table class="min-w-full">
                             <thead class="bg-gray-100 dark:bg-gray-700">
                                 <tr>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Session ID</th>

@@ -2,7 +2,7 @@
      class="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg sm:rounded-xl p-6 transition">
     <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Flight Data Records</h3>
 
-    <div class="overflow-x-auto overflow-y-auto max-h-96 rounded-lg border border-gray-200 dark:border-gray-700">
+    <div class="overflow-x-auto overflow-y-auto max-h-96 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
         <table class="min-w-full">
             <thead class="bg-gray-100 dark:bg-gray-700 sticky top-0 z-10">
                 <tr>

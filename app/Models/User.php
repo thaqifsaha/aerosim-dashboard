@@ -6,13 +6,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\FlightSession;
+use App\Models\FlightSchedule;
 use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -54,6 +56,11 @@ class User extends Authenticatable
     public function flightSessions()
     {
         return $this->hasMany(FlightSession::class);
+    }
+
+    public function flightSchedules()
+    {
+        return $this->hasMany(FlightSchedule::class);
     }
 
     public function getProfilePhotoUrlAttribute(): ?string

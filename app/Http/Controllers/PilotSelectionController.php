@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SystemSetting;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PilotSelectionController extends Controller
 {
@@ -27,7 +28,12 @@ class PilotSelectionController extends Controller
         }
 
         $request->validate([
-            'active_pilot_id' => 'nullable|exists:users,id'
+            'active_pilot_id' => [
+                'nullable',
+                Rule::exists('users', 'id')->where(fn ($query) => $query
+                    ->where('role', 'pilot')
+                    ->whereNull('deleted_at')),
+            ],
         ]);
 
         $setting = SystemSetting::first();
