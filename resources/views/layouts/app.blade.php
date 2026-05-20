@@ -44,20 +44,22 @@
                 <div class="absolute bottom-20 left-1/3 w-80 h-80 bg-sky-100/60 dark:bg-indigo-500/10 rounded-full blur-3xl"></div>
             </div>
 
-            <div class="relative z-10">
+            <div class="relative z-10" x-data="{ sidebarOpen: window.innerWidth >= 640 }">
                 @include('layouts.navigation')
 
-                @isset($header)
-                    <header class="bg-white/70 dark:bg-gray-900/40 backdrop-blur-md border-b border-gray-200/40 dark:border-white/10">
-                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                            {{ $header }}
-                        </div>
-                    </header>
-                @endisset
+                <div class="pt-16 transition-all duration-300" :class="sidebarOpen ? 'sm:ml-64' : 'sm:ml-20'">
+                    @isset($header)
+                        <header class="bg-white/70 dark:bg-gray-900/40 backdrop-blur-md border-b border-gray-200/40 dark:border-white/10">
+                            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                                {{ $header }}
+                            </div>
+                        </header>
+                    @endisset
 
-                <main>
-                    {{ $slot }}
-                </main>
+                    <main>
+                        {{ $slot }}
+                    </main>
+                </div>
             </div>
         </div>
     <script>

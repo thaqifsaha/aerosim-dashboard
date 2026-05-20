@@ -1,49 +1,35 @@
-<nav x-data="{ open: false }" class="relative z-50 bg-white/70 dark:bg-gray-900/40 backdrop-blur-md border-b border-gray-200/40 dark:border-white/10">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center">
-                        <img src="{{ asset('images/company_logo.png') }}"
-                            alt="Company Logo"
-                            class="h-28 w-auto object-contain opacity-90 hover:opacity-100 transition dark:brightness-90">
-                    </a>
-                </div>
+@php
+    $sidebarLinkClasses = function (bool $active) {
+        return $active
+            ? 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-200'
+            : 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white transition';
+    };
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    @auth
-                        <x-nav-link :href="route('flight-schedules.index')"
-                                    :active="request()->routeIs('flight-schedules.*')">
-                            {{ auth()->user()->role === 'admin' ? __('Manage Schedule') : __('Book Flight Session') }}
-                        </x-nav-link>
-                        @if(auth()->user()->role === 'admin')
-                            <x-nav-link :href="route('pilot-selection.index')" 
-                                        :active="request()->routeIs('pilot-selection.*')">
-                                {{ __('Select Pilot') }}
-                            </x-nav-link>
-                        @endif
-                    @endauth
-                </div>
-            </div>
+    $sidebarIconClasses = 'h-5 w-5 shrink-0';
+@endphp
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-
-                <!-- 🌙 Theme Toggle Button -->    
-                <button id="theme-toggle"
+<nav class="relative z-50">
+    <div class="fixed inset-x-0 top-0 z-50 h-16 bg-white/70 dark:bg-gray-900/40 backdrop-blur-md border-b border-gray-200/40 dark:border-white/10">
+        <div class="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-3">
+                <button
                     type="button"
-                    class="mr-4 w-10 h-10 flex items-center justify-center rounded-lg 
-                        bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100 
-                        hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-300">
-                    <span id="theme-icon" class="inline-block transition-transform duration-500">🌙</span>
+                    @click="sidebarOpen = ! sidebarOpen"
+                    class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none transition-all duration-300"
+                    aria-label="Toggle sidebar">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
                 </button>
 
+                <a href="{{ route('dashboard') }}" class="flex items-center">
+                    <img src="{{ asset('images/company_logo.png') }}"
+                        alt="Company Logo"
+                        class="h-20 w-auto object-contain opacity-90 hover:opacity-100 transition dark:brightness-90">
+                </a>
+            </div>
+
+            <div class="flex items-center">
                 <x-dropdown align="right" width="w-80" contentClasses="py-0">
                     <x-slot name="trigger">
                         <button id="flight-session-notification-button"
@@ -61,7 +47,7 @@
                                     badge.classList.add('hidden');
                                 }
                             });"
-                            class="relative mr-4 w-10 h-10 flex items-center justify-center rounded-lg
+                            class="relative w-10 h-10 flex items-center justify-center rounded-lg
                                 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100
                                 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none transition-all duration-300"
                             aria-label="Flight session notifications">
@@ -335,95 +321,104 @@
                     </x-slot>
                 </x-dropdown>
 
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="h-10 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800 
-                               dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <x-dropdown-link :href="route('contact-about')">
-                            {{ __('Contact / About') }}
-                        </x-dropdown-link>
-
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
-
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                <button id="theme-toggle"
+                    type="button"
+                    class="ml-4 w-10 h-10 flex items-center justify-center rounded-lg
+                        bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100
+                        hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-300">
+                    <span id="theme-icon" class="inline-block transition-transform duration-500">🌙</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('flight-schedules.index')" :active="request()->routeIs('flight-schedules.*')">
-                {{ auth()->user()->role === 'admin' ? __('Manage Schedule') : __('Book Flight Session') }}
-            </x-responsive-nav-link>
-            @if(auth()->user()->role === 'admin')
-                <x-responsive-nav-link :href="route('pilot-selection.index')" :active="request()->routeIs('pilot-selection.*')">
-                    {{ __('Select Pilot') }}
-                </x-responsive-nav-link>
-            @endif
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-            </div>
-        </div>
+    <div
+        x-show="sidebarOpen"
+        x-transition.opacity
+        @click="sidebarOpen = false"
+        class="fixed inset-0 top-16 z-30 bg-gray-950/40 sm:hidden"
+        style="display: none;">
     </div>
 
+    <aside
+        class="fixed left-0 top-16 bottom-0 z-40 flex flex-col bg-white/80 dark:bg-gray-900/70 backdrop-blur-md border-r border-gray-200/40 dark:border-white/10 shadow-xl sm:shadow-none transition-all duration-300"
+        :class="sidebarOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full sm:w-20 sm:translate-x-0'">
+        <div class="flex-1 overflow-y-auto px-3 py-4">
+            <div class="space-y-1">
+                <a href="{{ route('dashboard') }}"
+                    class="{{ $sidebarLinkClasses(request()->routeIs('dashboard')) }}"
+                    @click="if (window.innerWidth < 640) sidebarOpen = false">
+                    <svg class="{{ $sidebarIconClasses }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l9-9 9 9M5 10v10h14V10" />
+                    </svg>
+                    <span x-show="sidebarOpen" x-transition.opacity>Dashboard</span>
+                </a>
+
+                @auth
+                    <a href="{{ route('flight-schedules.index') }}"
+                        class="{{ $sidebarLinkClasses(request()->routeIs('flight-schedules.*')) }}"
+                        @click="if (window.innerWidth < 640) sidebarOpen = false">
+                        <svg class="{{ $sidebarIconClasses }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z" />
+                        </svg>
+                        <span x-show="sidebarOpen" x-transition.opacity>
+                            {{ auth()->user()->role === 'admin' ? __('Manage Schedule') : __('Book Flight Session') }}
+                        </span>
+                    </a>
+
+                    @if(auth()->user()->role === 'admin')
+                        <a href="{{ route('pilot-selection.index') }}"
+                            class="{{ $sidebarLinkClasses(request()->routeIs('pilot-selection.*')) }}"
+                            @click="if (window.innerWidth < 640) sidebarOpen = false">
+                            <svg class="{{ $sidebarIconClasses }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1m0-4a4 4 0 100-8 4 4 0 000 8zm8 0a4 4 0 100-8 4 4 0 000 8z" />
+                            </svg>
+                            <span x-show="sidebarOpen" x-transition.opacity>{{ __('Select Pilot') }}</span>
+                        </a>
+                    @endif
+                @endauth
+
+                <a href="{{ route('contact-about') }}"
+                    class="{{ $sidebarLinkClasses(request()->routeIs('contact-about')) }}"
+                    @click="if (window.innerWidth < 640) sidebarOpen = false">
+                    <svg class="{{ $sidebarIconClasses }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 16h-1v-4h-1m1-4h.01M12 21a9 9 0 100-18 9 9 0 000 18z" />
+                    </svg>
+                    <span x-show="sidebarOpen" x-transition.opacity>{{ __('Contact / About') }}</span>
+                </a>
+            </div>
+        </div>
+
+        @auth
+            <div class="border-t border-gray-200/70 dark:border-white/10 px-3 py-4">
+                <div class="mb-3 px-3" x-show="sidebarOpen" x-transition.opacity>
+                    <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{{ Auth::user()->name }}</p>
+                    <p class="truncate text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</p>
+                </div>
+
+                <div class="space-y-1">
+                    <a href="{{ route('profile.edit') }}"
+                        class="{{ $sidebarLinkClasses(request()->routeIs('profile.edit')) }}"
+                        @click="if (window.innerWidth < 640) sidebarOpen = false">
+                        <svg class="{{ $sidebarIconClasses }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 21a7.5 7.5 0 0115 0" />
+                        </svg>
+                        <span x-show="sidebarOpen" x-transition.opacity>{{ __('Profile') }}</span>
+                    </a>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+
+                        <button type="submit"
+                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white transition">
+                            <svg class="{{ $sidebarIconClasses }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3-3h-9m9 0l-3-3m3 3l-3 3" />
+                            </svg>
+                            <span x-show="sidebarOpen" x-transition.opacity>{{ __('Log Out') }}</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @endauth
+    </aside>
 </nav>
