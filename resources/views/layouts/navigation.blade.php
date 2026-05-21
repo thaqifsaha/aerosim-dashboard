@@ -14,7 +14,7 @@
             <div class="flex items-center gap-3">
                 <button
                     type="button"
-                    @click="sidebarOpen = ! sidebarOpen"
+                    @click="toggleSidebar()"
                     class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none transition-all duration-300"
                     aria-label="Toggle sidebar">
                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -335,7 +335,7 @@
     <div
         x-show="sidebarOpen"
         x-transition.opacity
-        @click="sidebarOpen = false"
+        @click="setSidebarOpen(false)"
         class="fixed inset-0 top-16 z-30 bg-gray-950/40 sm:hidden"
         style="display: none;">
     </div>
@@ -347,7 +347,7 @@
             <div class="space-y-1">
                 <a href="{{ route('dashboard') }}"
                     class="{{ $sidebarLinkClasses(request()->routeIs('dashboard')) }}"
-                    @click="if (window.innerWidth < 640) sidebarOpen = false">
+                    @click="if (window.innerWidth < 640) setSidebarOpen(false)">
                     <svg class="{{ $sidebarIconClasses }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l9-9 9 9M5 10v10h14V10" />
                     </svg>
@@ -357,7 +357,7 @@
                 @auth
                     <a href="{{ route('flight-schedules.index') }}"
                         class="{{ $sidebarLinkClasses(request()->routeIs('flight-schedules.*')) }}"
-                        @click="if (window.innerWidth < 640) sidebarOpen = false">
+                        @click="if (window.innerWidth < 640) setSidebarOpen(false)">
                         <svg class="{{ $sidebarIconClasses }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z" />
                         </svg>
@@ -369,7 +369,7 @@
                     @if(auth()->user()->role === 'admin')
                         <a href="{{ route('pilot-selection.index') }}"
                             class="{{ $sidebarLinkClasses(request()->routeIs('pilot-selection.*')) }}"
-                            @click="if (window.innerWidth < 640) sidebarOpen = false">
+                            @click="if (window.innerWidth < 640) setSidebarOpen(false)">
                             <svg class="{{ $sidebarIconClasses }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1m0-4a4 4 0 100-8 4 4 0 000 8zm8 0a4 4 0 100-8 4 4 0 000 8z" />
                             </svg>
@@ -380,7 +380,7 @@
 
                 <a href="{{ route('contact-about') }}"
                     class="{{ $sidebarLinkClasses(request()->routeIs('contact-about')) }}"
-                    @click="if (window.innerWidth < 640) sidebarOpen = false">
+                    @click="if (window.innerWidth < 640) setSidebarOpen(false)">
                     <svg class="{{ $sidebarIconClasses }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 16h-1v-4h-1m1-4h.01M12 21a9 9 0 100-18 9 9 0 000 18z" />
                     </svg>
@@ -399,7 +399,7 @@
                 <div class="space-y-1">
                     <a href="{{ route('profile.edit') }}"
                         class="{{ $sidebarLinkClasses(request()->routeIs('profile.edit')) }}"
-                        @click="if (window.innerWidth < 640) sidebarOpen = false">
+                        @click="if (window.innerWidth < 640) setSidebarOpen(false)">
                         <svg class="{{ $sidebarIconClasses }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 21a7.5 7.5 0 0115 0" />
                         </svg>

@@ -44,7 +44,37 @@
                 <div class="absolute bottom-20 left-1/3 w-80 h-80 bg-sky-100/60 dark:bg-indigo-500/10 rounded-full blur-3xl"></div>
             </div>
 
-            <div class="relative z-10" x-data="{ sidebarOpen: window.innerWidth >= 640 }">
+            <div
+                class="relative z-10"
+                x-data="{
+                    sidebarOpen: false,
+                    sidebarStorageKey: 'sidebarOpen',
+                    isDesktop() {
+                        return window.innerWidth >= 640;
+                    },
+                    savedSidebarOpen() {
+                        const saved = localStorage.getItem(this.sidebarStorageKey);
+
+                        return saved === null ? true : saved === 'true';
+                    },
+                    init() {
+                        this.sidebarOpen = this.isDesktop() ? this.savedSidebarOpen() : false;
+
+                        window.addEventListener('resize', () => {
+                            this.sidebarOpen = this.isDesktop() ? this.savedSidebarOpen() : false;
+                        });
+                    },
+                    setSidebarOpen(open, persistDesktop = false) {
+                        this.sidebarOpen = open;
+
+                        if (persistDesktop && this.isDesktop()) {
+                            localStorage.setItem(this.sidebarStorageKey, open ? 'true' : 'false');
+                        }
+                    },
+                    toggleSidebar() {
+                        this.setSidebarOpen(! this.sidebarOpen, true);
+                    }
+                }">
                 @include('layouts.navigation')
 
                 <div class="pt-16 transition-all duration-300" :class="sidebarOpen ? 'sm:ml-64' : 'sm:ml-20'">
