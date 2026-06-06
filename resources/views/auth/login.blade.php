@@ -10,9 +10,10 @@
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input 
                 id="email" 
-                class="block mt-2 w-full" 
+                class="block mt-2 w-full placeholder-gray-400" 
                 type="email" 
                 name="email" 
+                placeholder="johndoe@example.com"
                 :value="old('email')" 
                 required 
                 autofocus 
