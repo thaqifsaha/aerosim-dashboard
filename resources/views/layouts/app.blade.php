@@ -10,7 +10,7 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;600&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Montserrat:wght@600;700;800&family=Orbitron:wght@500;600&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -35,8 +35,8 @@
             }
         </style>
     </head>
-    <body class="font-sans antialiased bg-slate-100 dark:bg-gray-950">
-        <div class="min-h-screen relative overflow-hidden bg-gradient-to-b from-blue-100 via-white to-white dark:from-[#0a192f] dark:via-[#0f172a] dark:to-black">
+    <body class="font-sans antialiased bg-slate-50 dark:bg-[#060e1a]">
+        <div class="min-h-screen relative overflow-hidden bg-gradient-to-b from-slate-100 via-white to-white dark:from-[#0A1628] dark:via-[#0a1628] dark:to-[#060e1a]">
 
             <div class="pointer-events-none fixed inset-0 z-0 opacity-40 dark:opacity-20">
                 <div class="absolute top-20 left-10 w-72 h-72 bg-white/50 dark:bg-blue-500/10 rounded-full blur-3xl"></div>
@@ -79,8 +79,8 @@
 
                 <div class="pt-16 transition-all duration-300" :class="sidebarOpen ? 'sm:ml-64' : 'sm:ml-20'">
                     @isset($header)
-                        <header class="bg-white/70 dark:bg-gray-900/40 backdrop-blur-md border-b border-gray-200/40 dark:border-white/10">
-                            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        <header class="bg-white/70 dark:bg-[#0A1628]/60 backdrop-blur-md border-b border-slate-200/40 dark:border-white/10">
+                            <div class="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8">
                                 {{ $header }}
                             </div>
                         </header>
@@ -96,6 +96,8 @@
     document.addEventListener('DOMContentLoaded', function () {
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');
+        const moonSvg = document.getElementById('theme-svg-moon');
+        const sunSvg = document.getElementById('theme-svg-sun');
 
         function applyTheme(theme) {
             const isDark = theme === 'dark';
@@ -106,7 +108,10 @@
                 themeIcon.classList.add('rotate-180', 'scale-75');
 
                 setTimeout(() => {
-                    themeIcon.textContent = isDark ? '☀️' : '🌙';
+                    if (moonSvg && sunSvg) {
+                        moonSvg.classList.toggle('hidden', isDark);
+                        sunSvg.classList.toggle('hidden', !isDark);
+                    }
                     themeIcon.classList.remove('rotate-180', 'scale-75');
                     themeIcon.classList.add('rotate-0', 'scale-100');
                 }, 150);

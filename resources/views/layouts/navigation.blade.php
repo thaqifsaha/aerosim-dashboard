@@ -1,21 +1,28 @@
 @php
     $sidebarLinkClasses = function (bool $active) {
         return $active
-            ? 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-200'
-            : 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white transition';
+            ? 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium bg-cyan-500/10 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-300'
+            : 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white transition cursor-pointer';
     };
 
     $sidebarIconClasses = 'h-5 w-5 shrink-0';
 @endphp
 
 <nav class="relative z-50">
-    <div class="fixed inset-x-0 top-0 z-50 h-16 bg-white/70 dark:bg-gray-900/40 backdrop-blur-md border-b border-gray-200/40 dark:border-white/10">
+    <!-- Top Bar -->
+    <div class="fixed inset-x-0 top-0 z-50 h-16 bg-white/80 dark:bg-[#0A1628]/80 backdrop-blur-xl border-b border-slate-200/40 dark:border-white/10">
         <div class="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8">
+
+            <!-- Left: Hamburger + Logo -->
             <div class="flex items-center gap-3">
                 <button
                     type="button"
                     @click="toggleSidebar()"
-                    class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none transition-all duration-300"
+                    class="cursor-pointer w-10 h-10 flex items-center justify-center rounded-lg
+                        bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10
+                        text-slate-700 dark:text-slate-300
+                        hover:bg-slate-200 dark:hover:bg-white/10
+                        focus:outline-none transition-colors duration-200"
                     aria-label="Toggle sidebar">
                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16" />
@@ -29,7 +36,10 @@
                 </a>
             </div>
 
-            <div class="flex items-center">
+            <!-- Right: Notifications + Theme Toggle -->
+            <div class="flex items-center gap-2">
+
+                <!-- Notification Bell -->
                 <x-dropdown align="right" width="w-80" contentClasses="py-0">
                     <x-slot name="trigger">
                         <button id="flight-session-notification-button"
@@ -47,9 +57,11 @@
                                     badge.classList.add('hidden');
                                 }
                             });"
-                            class="relative w-10 h-10 flex items-center justify-center rounded-lg
-                                bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100
-                                hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none transition-all duration-300"
+                            class="cursor-pointer relative w-10 h-10 flex items-center justify-center rounded-lg
+                                bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10
+                                text-slate-700 dark:text-slate-300
+                                hover:bg-slate-200 dark:hover:bg-white/10
+                                focus:outline-none transition-colors duration-200"
                             aria-label="Flight session notifications">
                             <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a3 3 0 11-5.714 0" />
@@ -64,51 +76,52 @@
 
                     <x-slot name="content">
                         <div class="w-80 overflow-hidden">
-                            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Flight Session Notifications</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Upcoming reminders and latest completed activity</p>
+                            <!-- Dropdown Header -->
+                            <div class="px-4 py-3 border-b border-slate-100 dark:border-white/10">
+                                <p class="text-sm font-bold text-slate-900 dark:text-slate-100">Flight Session Notifications</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Upcoming reminders and latest completed activity</p>
                             </div>
 
                             <div class="max-h-96 overflow-y-auto">
-                                <div class="px-4 py-2 bg-gray-50 dark:bg-gray-800/70 border-b border-gray-100 dark:border-gray-700/70">
-                                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Upcoming Flight Sessions</p>
+
+                                <!-- Upcoming Sessions -->
+                                <div class="px-4 py-2 bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-white/10">
+                                    <p class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Upcoming Flight Sessions</p>
                                 </div>
 
                                 @forelse($upcomingScheduleReminders as $schedule)
                                     <a href="{{ route('flight-schedules.index') }}"
-                                        class="block px-4 py-3 border-b border-gray-100 dark:border-gray-700/70 hover:bg-gray-100 dark:hover:bg-gray-700/70 transition">
+                                        class="block px-4 py-3 border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors duration-150">
                                         <div class="flex items-start justify-between gap-3">
                                             <div class="min-w-0">
-                                                <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                                <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
                                                     {{ auth()->user()->role === 'admin' ? ($schedule->user?->name ?? 'Unknown pilot') : 'Your booked session' }}
                                                 </p>
-                                                <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">
+                                                <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">
                                                     {{ $schedule->scheduled_date->format('d M Y') }}
                                                     · {{ \Carbon\Carbon::parse($schedule->scheduled_time)->format('g:i A') }}
                                                 </p>
-                                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                                                     {{ $schedule->aircraft_type }}
                                                 </p>
                                             </div>
-
-                                            <div class="shrink-0 self-end text-right">
-                                                <div class="mt-2 flex justify-end">
-                                                    <span class="inline-flex px-2 py-0.5 text-[11px] font-semibold rounded-full bg-blue-100 text-blue-700">
-                                                        {{ ucfirst($schedule->status) }}
-                                                    </span>
-                                                </div>
+                                            <div class="shrink-0 self-end">
+                                                <span class="inline-flex px-2 py-0.5 text-[11px] font-bold rounded-full bg-cyan-100 dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-400">
+                                                    {{ ucfirst($schedule->status) }}
+                                                </span>
                                             </div>
                                         </div>
                                     </a>
                                 @empty
-                                    <div class="px-4 py-4 border-b border-gray-100 dark:border-gray-700/70">
-                                        <p class="text-sm text-gray-600 dark:text-gray-300">No upcoming sessions booked.</p>
+                                    <div class="px-4 py-4 border-b border-slate-100 dark:border-white/5">
+                                        <p class="text-sm text-slate-500 dark:text-slate-400">No upcoming sessions booked.</p>
                                     </div>
                                 @endforelse
 
+                                <!-- New Bookings (admin only) -->
                                 @if(auth()->user()->role === 'admin' && $bookedScheduleNotifications->isNotEmpty())
-                                    <div class="px-4 py-2 bg-gray-50 dark:bg-gray-800/70 border-b border-gray-100 dark:border-gray-700/70">
-                                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">New Bookings</p>
+                                    <div class="px-4 py-2 bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-white/10">
+                                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">New Bookings</p>
                                     </div>
 
                                     @foreach($bookedScheduleNotifications as $notification)
@@ -120,32 +133,31 @@
                                         @endphp
 
                                         <a href="{{ route('flight-schedules.index') }}"
-                                            class="block px-4 py-3 border-b border-gray-100 dark:border-gray-700/70 hover:bg-gray-100 dark:hover:bg-gray-700/70 transition">
+                                            class="block px-4 py-3 border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors duration-150">
                                             <div class="flex items-start justify-between gap-3">
                                                 <div class="min-w-0">
-                                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
                                                         {{ $data['pilot_name'] ?? 'Unknown pilot' }}
                                                     </p>
-                                                    <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">
+                                                    <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">
                                                         Booked {{ $data['aircraft_type'] ?? 'flight session' }}
                                                     </p>
-                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                    <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                                                         {{ ! empty($data['scheduled_date']) ? \Carbon\Carbon::parse($data['scheduled_date'])->format('d M Y') : '-' }}
                                                         @if(! empty($data['scheduled_time']))
                                                             · {{ \Carbon\Carbon::parse($data['scheduled_time'])->format('g:i A') }}
                                                         @endif
                                                     </p>
                                                 </div>
-
                                                 <div class="shrink-0 text-right">
                                                     @if(is_null($notification->read_at))
-                                                        <span class="inline-block h-2 w-2 rounded-full bg-sky-500"></span>
+                                                        <span class="inline-block h-2 w-2 rounded-full bg-cyan-400"></span>
                                                     @endif
                                                     @if($bookedAt)
-                                                        <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 whitespace-nowrap">{{ $bookedAt }}</p>
+                                                        <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ $bookedAt }}</p>
                                                     @endif
-                                                    <div class="mt-2 flex justify-end">
-                                                        <span class="inline-flex px-2 py-0.5 text-[11px] font-semibold rounded-full bg-blue-100 text-blue-700">
+                                                    <div class="mt-1.5 flex justify-end">
+                                                        <span class="inline-flex px-2 py-0.5 text-[11px] font-bold rounded-full bg-cyan-100 dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-400">
                                                             Upcoming
                                                         </span>
                                                     </div>
@@ -155,9 +167,10 @@
                                     @endforeach
                                 @endif
 
+                                <!-- Tomorrow's Reminders -->
                                 @if($reminderNotifications->isNotEmpty())
-                                    <div class="px-4 py-2 bg-gray-50 dark:bg-gray-800/70 border-b border-gray-100 dark:border-gray-700/70">
-                                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Tomorrow's Reminders</p>
+                                    <div class="px-4 py-2 bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-white/10">
+                                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Tomorrow's Reminders</p>
                                     </div>
 
                                     @foreach($reminderNotifications as $notification)
@@ -169,30 +182,29 @@
                                         @endphp
 
                                         <a href="{{ route('flight-schedules.index') }}"
-                                            class="block px-4 py-3 border-b border-gray-100 dark:border-gray-700/70 hover:bg-gray-100 dark:hover:bg-gray-700/70 transition">
+                                            class="block px-4 py-3 border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors duration-150">
                                             <div class="flex items-start justify-between gap-3">
                                                 <div class="min-w-0">
-                                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
                                                         {{ auth()->user()->role === 'admin' ? ($data['pilot_name'] ?? 'Unknown pilot') : 'Your booked session' }}
                                                     </p>
-                                                    <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">
+                                                    <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">
                                                         Reminder: {{ $data['aircraft_type'] ?? 'flight session' }}
                                                     </p>
-                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                    <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                                                         {{ ! empty($data['scheduled_date']) ? \Carbon\Carbon::parse($data['scheduled_date'])->format('d M Y') : '-' }}
                                                         @if(! empty($data['scheduled_time']))
                                                             · {{ \Carbon\Carbon::parse($data['scheduled_time'])->format('g:i A') }}
                                                         @endif
                                                     </p>
                                                 </div>
-
                                                 <div class="shrink-0 text-right">
-                                                    <span class="inline-block h-2 w-2 rounded-full bg-sky-500"></span>
+                                                    <span class="inline-block h-2 w-2 rounded-full bg-cyan-400"></span>
                                                     @if($remindedAt)
-                                                        <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 whitespace-nowrap">{{ $remindedAt }}</p>
+                                                        <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ $remindedAt }}</p>
                                                     @endif
-                                                    <div class="mt-2 flex justify-end">
-                                                        <span class="inline-flex px-2 py-0.5 text-[11px] font-semibold rounded-full bg-blue-100 text-blue-700">
+                                                    <div class="mt-1.5 flex justify-end">
+                                                        <span class="inline-flex px-2 py-0.5 text-[11px] font-bold rounded-full bg-cyan-100 dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-400">
                                                             Upcoming
                                                         </span>
                                                     </div>
@@ -202,8 +214,9 @@
                                     @endforeach
                                 @endif
 
-                                <div class="px-4 py-2 bg-gray-50 dark:bg-gray-800/70 border-b border-gray-100 dark:border-gray-700/70">
-                                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Completed Flight Sessions</p>
+                                <!-- Completed Sessions -->
+                                <div class="px-4 py-2 bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-white/10">
+                                    <p class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Completed Flight Sessions</p>
                                 </div>
 
                                 @forelse($flightSessionNotifications as $notification)
@@ -217,19 +230,19 @@
 
                                     @if($sessionId)
                                         <a href="{{ route('flight-sessions.show', $sessionId) }}"
-                                            class="block px-4 py-3 border-b border-gray-100 dark:border-gray-700/70 hover:bg-gray-100 dark:hover:bg-gray-700/70 transition">
+                                            class="block px-4 py-3 border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors duration-150">
                                             <div class="flex items-start justify-between gap-3">
                                                 <div class="min-w-0">
-                                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
                                                         {{ auth()->user()->role === 'admin' ? ($data['pilot_name'] ?? 'Unknown pilot') : 'Your flight session' }}
                                                     </p>
-                                                    <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">
+                                                    <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">
                                                         Session #{{ $sessionId }}
                                                         @if(! empty($data['aircraft_type']))
                                                             · {{ $data['aircraft_type'] }}
                                                         @endif
                                                     </p>
-                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                    <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                                                         @if(isset($data['duration_sec']))
                                                             {{ \App\Models\FlightSession::formatDuration($data['duration_sec']) }}
                                                         @endif
@@ -241,16 +254,15 @@
                                                         @endif
                                                     </p>
                                                 </div>
-
                                                 <div class="shrink-0 text-right">
                                                     @if(is_null($notification->read_at))
-                                                        <span class="inline-block h-2 w-2 rounded-full bg-sky-500"></span>
+                                                        <span class="inline-block h-2 w-2 rounded-full bg-cyan-400"></span>
                                                     @endif
                                                     @if($completedAt)
-                                                        <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 whitespace-nowrap">{{ $completedAt }}</p>
+                                                        <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ $completedAt }}</p>
                                                     @endif
-                                                    <div class="mt-2 flex justify-end">
-                                                        <span class="inline-flex px-2 py-0.5 text-[11px] font-semibold rounded-full bg-green-100 text-green-700">
+                                                    <div class="mt-1.5 flex justify-end">
+                                                        <span class="inline-flex px-2 py-0.5 text-[11px] font-bold rounded-full bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
                                                             Completed
                                                         </span>
                                                     </div>
@@ -260,13 +272,14 @@
                                     @endif
                                 @empty
                                     <div class="px-4 py-6 text-center">
-                                        <p class="text-sm text-gray-600 dark:text-gray-300">No completed flight sessions yet.</p>
+                                        <p class="text-sm text-slate-500 dark:text-slate-400">No completed flight sessions yet.</p>
                                     </div>
                                 @endforelse
 
+                                <!-- Cancelled Bookings (admin only) -->
                                 @if(auth()->user()->role === 'admin')
-                                    <div class="px-4 py-2 bg-gray-50 dark:bg-gray-800/70 border-y border-gray-100 dark:border-gray-700/70">
-                                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Cancelled Bookings</p>
+                                    <div class="px-4 py-2 bg-slate-50 dark:bg-slate-800/60 border-y border-slate-100 dark:border-white/10">
+                                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Cancelled Bookings</p>
                                     </div>
 
                                     @forelse($cancelledScheduleNotifications as $notification)
@@ -278,32 +291,31 @@
                                         @endphp
 
                                         <a href="{{ route('flight-schedules.index') }}"
-                                            class="block px-4 py-3 border-b border-gray-100 dark:border-gray-700/70 hover:bg-gray-100 dark:hover:bg-gray-700/70 transition">
+                                            class="block px-4 py-3 border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors duration-150">
                                             <div class="flex items-start justify-between gap-3">
                                                 <div class="min-w-0">
-                                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
                                                         {{ $data['pilot_name'] ?? 'Unknown pilot' }}
                                                     </p>
-                                                    <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">
+                                                    <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">
                                                         {{ $data['aircraft_type'] ?? 'flight session' }}
                                                     </p>
-                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                    <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                                                         {{ ! empty($data['scheduled_date']) ? \Carbon\Carbon::parse($data['scheduled_date'])->format('d M Y') : '-' }}
                                                         @if(! empty($data['scheduled_time']))
                                                             · {{ \Carbon\Carbon::parse($data['scheduled_time'])->format('g:i A') }}
                                                         @endif
                                                     </p>
                                                 </div>
-
                                                 <div class="shrink-0 text-right">
                                                     @if(is_null($notification->read_at))
-                                                        <span class="inline-block h-2 w-2 rounded-full bg-sky-500"></span>
+                                                        <span class="inline-block h-2 w-2 rounded-full bg-cyan-400"></span>
                                                     @endif
                                                     @if($cancelledAt)
-                                                        <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400 whitespace-nowrap">{{ $cancelledAt }}</p>
+                                                        <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ $cancelledAt }}</p>
                                                     @endif
-                                                    <div class="mt-2 flex justify-end">
-                                                        <span class="inline-flex px-2 py-0.5 text-[11px] font-semibold rounded-full bg-red-100 text-red-700">
+                                                    <div class="mt-1.5 flex justify-end">
+                                                        <span class="inline-flex px-2 py-0.5 text-[11px] font-bold rounded-full bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400">
                                                             Cancelled
                                                         </span>
                                                     </div>
@@ -312,37 +324,56 @@
                                         </a>
                                     @empty
                                         <div class="px-4 py-4">
-                                            <p class="text-sm text-gray-600 dark:text-gray-300">No cancelled bookings yet.</p>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400">No cancelled bookings yet.</p>
                                         </div>
                                     @endforelse
                                 @endif
+
                             </div>
                         </div>
                     </x-slot>
                 </x-dropdown>
 
+                <!-- Theme Toggle -->
                 <button id="theme-toggle"
                     type="button"
-                    class="ml-4 w-10 h-10 flex items-center justify-center rounded-lg
-                        bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100
-                        hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-300">
-                    <span id="theme-icon" class="inline-block transition-transform duration-500">🌙</span>
+                    class="cursor-pointer w-10 h-10 flex items-center justify-center rounded-lg
+                        bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10
+                        text-slate-700 dark:text-slate-300
+                        hover:bg-slate-200 dark:hover:bg-white/10
+                        transition-colors duration-200"
+                    aria-label="Toggle theme">
+                    <span id="theme-icon" class="inline-block transition-transform duration-500">
+                        <svg id="theme-svg-moon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                        <svg id="theme-svg-sun" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                    </span>
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Mobile Overlay -->
     <div
         x-show="sidebarOpen"
         x-transition.opacity
         @click="setSidebarOpen(false)"
-        class="fixed inset-0 top-16 z-30 bg-gray-950/40 sm:hidden"
+        class="fixed inset-0 top-16 z-30 bg-slate-950/50 sm:hidden"
         style="display: none;">
     </div>
 
+    <!-- Sidebar -->
     <aside
-        class="fixed left-0 top-16 bottom-0 z-40 flex flex-col bg-white/80 dark:bg-gray-900/70 backdrop-blur-md border-r border-gray-200/40 dark:border-white/10 shadow-xl sm:shadow-none transition-all duration-300"
+        class="fixed left-0 top-16 bottom-0 z-40 flex flex-col
+            bg-white/90 dark:bg-[#0A1628]/90 backdrop-blur-xl
+            border-r border-slate-200/50 dark:border-white/10
+            shadow-xl sm:shadow-none transition-all duration-300"
         :class="sidebarOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full sm:w-20 sm:translate-x-0'">
+
+        <!-- Nav Links -->
         <div class="flex-1 overflow-y-auto px-3 py-4">
             <div class="space-y-1">
                 <a href="{{ route('dashboard') }}"
@@ -389,11 +420,12 @@
             </div>
         </div>
 
+        <!-- User Section -->
         @auth
-            <div class="border-t border-gray-200/70 dark:border-white/10 px-3 py-4">
+            <div class="border-t border-slate-200/70 dark:border-white/10 px-3 py-4">
                 <div class="mb-3 px-3" x-show="sidebarOpen" x-transition.opacity>
-                    <p class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{{ Auth::user()->name }}</p>
-                    <p class="truncate text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</p>
+                    <p class="truncate text-sm font-bold text-slate-900 dark:text-slate-100">{{ Auth::user()->name }}</p>
+                    <p class="truncate text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ Auth::user()->email }}</p>
                 </div>
 
                 <div class="space-y-1">
@@ -408,9 +440,12 @@
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-
                         <button type="submit"
-                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white transition">
+                            class="cursor-pointer flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium
+                                text-slate-600 dark:text-slate-300
+                                hover:bg-slate-100 hover:text-slate-900
+                                dark:hover:bg-white/10 dark:hover:text-white
+                                transition-colors duration-200">
                             <svg class="{{ $sidebarIconClasses }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3-3h-9m9 0l-3-3m3 3l-3 3" />
                             </svg>

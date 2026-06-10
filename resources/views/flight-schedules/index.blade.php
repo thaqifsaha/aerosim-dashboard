@@ -1,27 +1,33 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="hud-title animate-hud text-xl font-semibold">
+            <h2 class="font-['Montserrat'] text-xl font-bold tracking-wide text-slate-800 dark:text-white">
                 {{ auth()->user()->role === 'admin' ? 'Flight Schedule Management' : 'Book Flight Session' }}
             </h2>
-            <p class="text-sm text-gray-400">
-                Logged in as:
-                <span class="font-semibold text-blue-400">{{ ucfirst(auth()->user()->role) }}</span>
-            </p>
+            <span class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                {{ ucfirst(auth()->user()->role) }}
+            </span>
         </div>
     </x-slot>
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
             @if(session('success'))
-                <div class="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/50 dark:text-green-300">
+                <div class="flex items-center gap-3 rounded-xl border border-emerald-200/60 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-950/40 dark:text-emerald-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                    </svg>
                     {{ session('success') }}
                 </div>
             @endif
 
             @if($errors->any())
-                <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
-                    <ul class="list-disc pl-5">
+                <div class="flex items-start gap-3 rounded-xl border border-red-200/60 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/20 dark:bg-red-950/40 dark:text-red-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    </svg>
+                    <ul class="list-disc pl-4 space-y-0.5">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -29,47 +35,65 @@
                 </div>
             @endif
 
+            {{-- ───── PILOT: Upcoming sessions ───── --}}
             @if(auth()->user()->role === 'pilot')
-                <section class="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg sm:rounded-xl p-6 transition">
-                    <h3 class="mb-4 text-lg font-bold text-gray-900 dark:text-gray-100">Your upcoming sessions</h3>
+                <div class="rounded-xl bg-white/70 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-100 dark:border-white/10 flex items-center gap-2">
+                        <div class="w-1 h-5 bg-cyan-400 rounded-full"></div>
+                        <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Your Upcoming Sessions</h3>
+                    </div>
 
                     @if($upcomingSchedules->isEmpty())
-                        <p class="text-sm text-gray-600 dark:text-gray-300">No upcoming sessions found.</p>
+                        <div class="px-6 py-8 text-center">
+                            <p class="text-sm text-slate-500 dark:text-slate-400">No upcoming sessions found.</p>
+                        </div>
                     @else
-                        <div class="overflow-x-auto rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                        <div class="overflow-x-auto">
                             <table class="min-w-full">
-                                <thead class="bg-gray-100 dark:bg-gray-700">
+                                <thead class="bg-slate-50/80 dark:bg-slate-800/60">
                                     <tr>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Date</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Time</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Aircraft</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Status</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Notes</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Actions</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Time</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Aircraft</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Notes</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                                     @foreach($upcomingSchedules as $schedule)
-                                        <tr class="border-t border-gray-200 dark:border-gray-700">
-                                            <td class="px-4 py-3 text-sm font-mono text-gray-900 dark:text-gray-100">{{ $schedule->scheduled_date->format('d M Y') }}</td>
-                                            <td class="px-4 py-3 text-sm font-mono text-gray-900 dark:text-gray-100">{{ \Carbon\Carbon::parse($schedule->scheduled_time)->format('g:i A') }}</td>
-                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $schedule->aircraft_type }}</td>
-                                            <td class="px-4 py-3 text-sm">
-                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
+                                        <tr class="hover:bg-slate-50/60 dark:hover:bg-white/5 transition-colors duration-150">
+                                            <td class="px-5 py-3 font-mono text-sm text-slate-700 dark:text-slate-300">{{ $schedule->scheduled_date->format('d M Y') }}</td>
+                                            <td class="px-5 py-3 font-mono text-sm text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($schedule->scheduled_time)->format('g:i A') }}</td>
+                                            <td class="px-5 py-3 text-sm text-slate-700 dark:text-slate-300">{{ $schedule->aircraft_type }}</td>
+                                            <td class="px-5 py-3 text-sm">
+                                                <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-cyan-100 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-300">
                                                     {{ ucfirst($schedule->status) }}
                                                 </span>
                                             </td>
-                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $schedule->notes ?: '-' }}</td>
-                                            <td class="px-4 py-3 text-sm">
+                                            <td class="px-5 py-3 text-sm text-slate-600 dark:text-slate-400">{{ $schedule->notes ?: '-' }}</td>
+                                            <td class="px-5 py-3 text-sm">
                                                 <div class="flex flex-wrap gap-2">
                                                     <a href="{{ route('flight-schedules.edit', $schedule) }}"
-                                                        class="inline-block px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white text-xs font-semibold rounded transition">
+                                                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+                                                            bg-slate-100 hover:bg-slate-200 text-slate-700
+                                                            dark:bg-white/5 dark:hover:bg-white/10 dark:text-slate-300
+                                                            border border-slate-200 dark:border-white/10 transition cursor-pointer">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                        </svg>
                                                         Edit
                                                     </a>
                                                     <form method="POST" action="{{ route('flight-schedules.cancel', $schedule) }}" onsubmit="return confirm('Cancel this scheduled session?');">
                                                         @csrf
                                                         @method('PATCH')
-                                                        <button class="inline-block px-4 py-2 bg-red-600 text-white text-xs font-semibold rounded hover:bg-red-700">
+                                                        <button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+                                                            bg-red-50 hover:bg-red-100 text-red-600
+                                                            dark:bg-red-500/10 dark:hover:bg-red-500/20 dark:text-red-400
+                                                            border border-red-200 dark:border-red-500/20 transition cursor-pointer">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                                            </svg>
                                                             Cancel
                                                         </button>
                                                     </form>
@@ -81,24 +105,31 @@
                             </table>
                         </div>
                     @endif
-                </section>
+                </div>
 
-                <section>
-                    <div class="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg sm:rounded-xl p-6 transition">
-                        <div class="mb-5">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">Book a new session</h3>
-                            <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                                Fridays and already-booked dates are unavailable.
-                            </p>
+                {{-- ───── PILOT: Book new session ───── --}}
+                <div class="rounded-xl bg-white/70 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-100 dark:border-white/10 flex items-center gap-2">
+                        <div class="w-1 h-5 bg-cyan-400 rounded-full"></div>
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Book a New Session</h3>
+                            <p class="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Fridays and already-booked dates are unavailable.</p>
                         </div>
+                    </div>
 
-                        <form method="POST" action="{{ route('flight-schedules.store') }}" class="space-y-5">
+                    <div class="px-6 py-6">
+                        <form method="POST" action="{{ route('flight-schedules.store') }}" class="space-y-6">
                             @csrf
 
                             <div>
-                                <label for="aircraft_type" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">Aircraft Type</label>
+                                <label for="aircraft_type" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Aircraft Type</label>
                                 <select id="aircraft_type" name="aircraft_type" required
-                                    class="w-full rounded border border-gray-300 bg-white text-gray-800 dark:bg-gray-700 dark:text-white dark:border-gray-600 px-3 py-2 text-sm transition">
+                                    class="w-full rounded-lg border border-slate-200 dark:border-white/10
+                                        bg-white/80 dark:bg-white/5
+                                        text-slate-800 dark:text-slate-200
+                                        px-3 py-2.5 text-sm
+                                        focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-400
+                                        transition">
                                     <option value="">Select aircraft type</option>
                                     @foreach(['Boeing 737-800', 'Boeing 747-400', 'MD-82'] as $aircraftType)
                                         <option value="{{ $aircraftType }}" @selected(old('aircraft_type') === $aircraftType)>
@@ -109,155 +140,197 @@
                             </div>
 
                             <div>
-                                <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">Booking Date</label>
+                                <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Booking Date</label>
                                 <input type="hidden" id="scheduled_date" name="scheduled_date" value="{{ old('scheduled_date') }}">
 
-                                <div class="rounded-lg border border-gray-200 bg-white/80 p-4 dark:border-gray-700 dark:bg-gray-900/50">
+                                <div class="rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-slate-900/50 p-4">
                                     <div class="mb-4 flex items-center justify-between">
-                                        <button type="button" id="calendar-prev" class="rounded px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800">←</button>
-                                        <p id="calendar-title" class="text-sm font-semibold text-gray-900 dark:text-gray-100"></p>
-                                        <button type="button" id="calendar-next" class="rounded px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800">→</button>
+                                        <button type="button" id="calendar-prev"
+                                            class="rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-600 dark:text-slate-300
+                                                hover:bg-slate-100 dark:hover:bg-white/5 transition cursor-pointer">←</button>
+                                        <p id="calendar-title" class="text-sm font-bold text-slate-800 dark:text-slate-200 tracking-wide"></p>
+                                        <button type="button" id="calendar-next"
+                                            class="rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-600 dark:text-slate-300
+                                                hover:bg-slate-100 dark:hover:bg-white/5 transition cursor-pointer">→</button>
                                     </div>
 
-                                    <div class="grid grid-cols-7 gap-2 text-center text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                                    <div class="grid grid-cols-7 gap-1.5 text-center text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+                                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span class="text-red-400">Fri</span><span>Sat</span>
                                     </div>
-                                    <div id="calendar-grid" class="mt-3 grid grid-cols-7 gap-2"></div>
+                                    <div id="calendar-grid" class="grid grid-cols-7 gap-1.5"></div>
                                 </div>
 
-                                <p id="calendar-selection" class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                <p id="calendar-selection" class="mt-2 text-sm text-slate-500 dark:text-slate-400">
                                     Select an available date.
                                 </p>
 
-                                <div class="mt-4 rounded-lg border border-gray-200 bg-gray-50/80 p-4 dark:border-gray-700 dark:bg-gray-900/60">
-                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Availability guide</p>
-                                    <div class="mt-3 flex flex-wrap gap-x-5 gap-y-3 text-sm text-gray-600 dark:text-gray-300">
+                                <div class="mt-3 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-slate-900/50 p-4">
+                                    <p class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Availability Guide</p>
+                                    <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-600 dark:text-slate-400">
                                         <div class="flex items-center gap-2">
-                                            <span class="h-4 w-4 rounded bg-gray-300 dark:bg-gray-700"></span>
-                                            <span>Unavailable date</span>
+                                            <span class="h-3.5 w-3.5 rounded bg-slate-200 dark:bg-slate-700"></span>
+                                            <span class="text-xs">Unavailable date</span>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <span class="h-4 w-4 rounded bg-blue-600"></span>
-                                            <span>Selected date</span>
+                                            <span class="h-3.5 w-3.5 rounded bg-cyan-500"></span>
+                                            <span class="text-xs">Selected date</span>
                                         </div>
                                     </div>
-                                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-300">
-                                        Unavailable dates will show either “Already booked” or “Closed on Friday”.
+                                    <p class="mt-2 text-xs text-slate-500 dark:text-slate-500">
+                                        Unavailable dates show "Already booked" or "Closed on Friday".
                                     </p>
                                 </div>
                             </div>
 
                             <div>
-                                <label for="scheduled_time" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">Booking Time</label>
+                                <label for="scheduled_time" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Booking Time</label>
                                 <input type="time" id="scheduled_time" name="scheduled_time" value="{{ old('scheduled_time') }}" min="11:00" max="20:00" required
-                                    class="w-full rounded border border-gray-300 bg-white text-gray-800 dark:bg-gray-700 dark:text-white dark:border-gray-600 px-3 py-2 text-sm transition">
-                                <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Available booking hours: 11:00 AM – 8:00 PM.</p>
+                                    class="w-full rounded-lg border border-slate-200 dark:border-white/10
+                                        bg-white/80 dark:bg-white/5
+                                        text-slate-800 dark:text-slate-200
+                                        px-3 py-2.5 text-sm
+                                        focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-400
+                                        transition">
+                                <p class="mt-1.5 text-xs text-slate-400 dark:text-slate-500">Available booking hours: 11:00 AM – 8:00 PM.</p>
                             </div>
 
                             <div>
-                                <label for="notes" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">Notes</label>
+                                <label for="notes" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Notes</label>
                                 <textarea id="notes" name="notes" rows="4"
-                                    class="w-full rounded border border-gray-300 bg-white text-gray-800 dark:bg-gray-700 dark:text-white dark:border-gray-600 px-3 py-2 text-sm transition">{{ old('notes') }}</textarea>
+                                    class="w-full rounded-lg border border-slate-200 dark:border-white/10
+                                        bg-white/80 dark:bg-white/5
+                                        text-slate-800 dark:text-slate-200
+                                        px-3 py-2.5 text-sm
+                                        focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-400
+                                        transition resize-none">{{ old('notes') }}</textarea>
                             </div>
 
-                            <button class="inline-block px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded hover:bg-blue-700">
+                            <button type="submit"
+                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg
+                                    text-xs font-bold uppercase tracking-wider
+                                    bg-cyan-500 hover:bg-cyan-400 text-white
+                                    shadow-md shadow-cyan-500/20 hover:shadow-cyan-400/30
+                                    transition-all duration-200 cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
                                 Book Session
                             </button>
                         </form>
                     </div>
-                </section>
+                </div>
             @endif
 
+            {{-- ───── ADMIN: Upcoming sessions ───── --}}
             @if(auth()->user()->role === 'admin')
-            <section class="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg sm:rounded-xl p-6 transition">
-                <h3 class="mb-4 text-lg font-bold text-gray-900 dark:text-gray-100">
-                    {{ auth()->user()->role === 'admin' ? 'Upcoming scheduled sessions' : 'Your upcoming sessions' }}
-                </h3>
-
-                @if($upcomingSchedules->isEmpty())
-                    <p class="text-sm text-gray-600 dark:text-gray-300">No upcoming sessions found.</p>
-                @else
-                    <div class="overflow-x-auto rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-                        <table class="min-w-full">
-                            <thead class="bg-gray-100 dark:bg-gray-700">
-                                <tr>
-                                    @if(auth()->user()->role === 'admin')
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Pilot</th>
-                                    @endif
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Date</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Time</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Aircraft</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Status</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Notes</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($upcomingSchedules as $schedule)
-                                    <tr class="border-t border-gray-200 dark:border-gray-700">
-                                        @if(auth()->user()->role === 'admin')
-                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $schedule->user?->name ?? '-' }}</td>
-                                        @endif
-                                        <td class="px-4 py-3 text-sm font-mono text-gray-900 dark:text-gray-100">{{ $schedule->scheduled_date->format('d M Y') }}</td>
-                                        <td class="px-4 py-3 text-sm font-mono text-gray-900 dark:text-gray-100">{{ \Carbon\Carbon::parse($schedule->scheduled_time)->format('g:i A') }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $schedule->aircraft_type }}</td>
-                                        <td class="px-4 py-3 text-sm">
-                                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
-                                                {{ ucfirst($schedule->status) }}
-                                            </span>
-                                        </td>
-                                        <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $schedule->notes ?: '-' }}</td>
-                                        <td class="px-4 py-3 text-sm">
-                                            <div class="flex flex-wrap gap-2">
-                                                <a href="{{ route('flight-schedules.edit', $schedule) }}"
-                                                    class="inline-block px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white text-xs font-semibold rounded transition">
-                                                    Edit
-                                                </a>
-                                                <form method="POST" action="{{ route('flight-schedules.cancel', $schedule) }}" onsubmit="return confirm('Cancel this scheduled session?');">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button class="inline-block px-4 py-2 bg-red-600 text-white text-xs font-semibold rounded hover:bg-red-700">
-                                                        Cancel
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                <div class="rounded-xl bg-white/70 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-100 dark:border-white/10 flex items-center gap-2">
+                        <div class="w-1 h-5 bg-cyan-400 rounded-full"></div>
+                        <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Upcoming Scheduled Sessions</h3>
                     </div>
-                @endif
-            </section>
-            @endif
 
-            @if(auth()->user()->role === 'admin')
-                <section class="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-lg sm:rounded-xl p-6 transition">
-                    <h3 class="mb-4 text-lg font-bold text-gray-900 dark:text-gray-100">Recently cancelled sessions</h3>
-
-                    @if($cancelledSchedules->isEmpty())
-                        <p class="text-sm text-gray-600 dark:text-gray-300">No cancelled sessions yet.</p>
+                    @if($upcomingSchedules->isEmpty())
+                        <div class="px-6 py-8 text-center">
+                            <p class="text-sm text-slate-500 dark:text-slate-400">No upcoming sessions found.</p>
+                        </div>
                     @else
-                        <div class="overflow-x-auto rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                        <div class="overflow-x-auto">
                             <table class="min-w-full">
-                                <thead class="bg-gray-100 dark:bg-gray-700">
+                                <thead class="bg-slate-50/80 dark:bg-slate-800/60">
                                     <tr>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Pilot</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Date</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Time</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Aircraft</th>
-                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Status</th>
+                                        @if(auth()->user()->role === 'admin')
+                                            <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pilot</th>
+                                        @endif
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Time</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Aircraft</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Notes</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                                    @foreach($upcomingSchedules as $schedule)
+                                        <tr class="hover:bg-slate-50/60 dark:hover:bg-white/5 transition-colors duration-150">
+                                            @if(auth()->user()->role === 'admin')
+                                                <td class="px-5 py-3 text-sm font-medium text-slate-700 dark:text-slate-300">{{ $schedule->user?->name ?? '-' }}</td>
+                                            @endif
+                                            <td class="px-5 py-3 font-mono text-sm text-slate-700 dark:text-slate-300">{{ $schedule->scheduled_date->format('d M Y') }}</td>
+                                            <td class="px-5 py-3 font-mono text-sm text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($schedule->scheduled_time)->format('g:i A') }}</td>
+                                            <td class="px-5 py-3 text-sm text-slate-700 dark:text-slate-300">{{ $schedule->aircraft_type }}</td>
+                                            <td class="px-5 py-3 text-sm">
+                                                <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-cyan-100 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-300">
+                                                    {{ ucfirst($schedule->status) }}
+                                                </span>
+                                            </td>
+                                            <td class="px-5 py-3 text-sm text-slate-600 dark:text-slate-400">{{ $schedule->notes ?: '-' }}</td>
+                                            <td class="px-5 py-3 text-sm">
+                                                <div class="flex flex-wrap gap-2">
+                                                    <a href="{{ route('flight-schedules.edit', $schedule) }}"
+                                                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+                                                            bg-slate-100 hover:bg-slate-200 text-slate-700
+                                                            dark:bg-white/5 dark:hover:bg-white/10 dark:text-slate-300
+                                                            border border-slate-200 dark:border-white/10 transition cursor-pointer">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                        </svg>
+                                                        Edit
+                                                    </a>
+                                                    <form method="POST" action="{{ route('flight-schedules.cancel', $schedule) }}" onsubmit="return confirm('Cancel this scheduled session?');">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+                                                            bg-red-50 hover:bg-red-100 text-red-600
+                                                            dark:bg-red-500/10 dark:hover:bg-red-500/20 dark:text-red-400
+                                                            border border-red-200 dark:border-red-500/20 transition cursor-pointer">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                                            </svg>
+                                                            Cancel
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- ───── ADMIN: Cancelled sessions ───── --}}
+                <div class="rounded-xl bg-white/70 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-100 dark:border-white/10 flex items-center gap-2">
+                        <div class="w-1 h-5 bg-red-400 rounded-full"></div>
+                        <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Recently Cancelled Sessions</h3>
+                    </div>
+
+                    @if($cancelledSchedules->isEmpty())
+                        <div class="px-6 py-8 text-center">
+                            <p class="text-sm text-slate-500 dark:text-slate-400">No cancelled sessions yet.</p>
+                        </div>
+                    @else
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead class="bg-slate-50/80 dark:bg-slate-800/60">
+                                    <tr>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pilot</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Time</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Aircraft</th>
+                                        <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                                     @foreach($cancelledSchedules as $schedule)
-                                        <tr class="border-t border-gray-200 dark:border-gray-700">
-                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $schedule->user?->name ?? '-' }}</td>
-                                            <td class="px-4 py-3 text-sm font-mono text-gray-900 dark:text-gray-100">{{ $schedule->scheduled_date->format('d M Y') }}</td>
-                                            <td class="px-4 py-3 text-sm font-mono text-gray-900 dark:text-gray-100">{{ \Carbon\Carbon::parse($schedule->scheduled_time)->format('g:i A') }}</td>
-                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $schedule->aircraft_type }}</td>
-                                            <td class="px-4 py-3 text-sm">
-                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">
+                                        <tr class="hover:bg-slate-50/60 dark:hover:bg-white/5 transition-colors duration-150">
+                                            <td class="px-5 py-3 text-sm font-medium text-slate-700 dark:text-slate-300">{{ $schedule->user?->name ?? '-' }}</td>
+                                            <td class="px-5 py-3 font-mono text-sm text-slate-700 dark:text-slate-300">{{ $schedule->scheduled_date->format('d M Y') }}</td>
+                                            <td class="px-5 py-3 font-mono text-sm text-slate-700 dark:text-slate-300">{{ \Carbon\Carbon::parse($schedule->scheduled_time)->format('g:i A') }}</td>
+                                            <td class="px-5 py-3 text-sm text-slate-700 dark:text-slate-300">{{ $schedule->aircraft_type }}</td>
+                                            <td class="px-5 py-3 text-sm">
+                                                <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400">
                                                     {{ ucfirst($schedule->status) }}
                                                 </span>
                                             </td>
@@ -267,8 +340,9 @@
                             </table>
                         </div>
                     @endif
-                </section>
+                </div>
             @endif
+
         </div>
     </div>
 
@@ -322,8 +396,8 @@
                             button.innerHTML = `<span class="block font-semibold">${day}</span><span class="mt-1 block text-[10px]">${isPast ? 'Past date' : (isFriday ? 'Closed on Friday' : 'Already booked')}</span>`;
                         } else {
                             button.className += hiddenInput.value === dateValue
-                                ? ' border-blue-600 bg-blue-600 text-white'
-                                : ' border-gray-200 bg-white text-gray-800 hover:border-blue-400 hover:bg-blue-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800';
+                                ? ' border-cyan-500 bg-cyan-500 text-white'
+                                : ' border-gray-200 bg-white text-gray-800 hover:border-cyan-400 hover:bg-cyan-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800';
                             button.textContent = day;
                             button.addEventListener('click', function () {
                                 hiddenInput.value = dateValue;
