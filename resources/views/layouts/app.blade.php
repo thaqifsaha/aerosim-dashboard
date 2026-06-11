@@ -92,6 +92,126 @@
                 </div>
             </div>
         </div>
+    {{-- Idle timeout warning modal --}}
+    @auth
+    <div x-data="idleTimer()" x-init="start()" class="relative z-50">
+        <div
+            x-show="showWarning"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
+            style="display: none;"
+        >
+            <div
+                x-show="showWarning"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="bg-white dark:bg-[#0d1f3c] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-8 text-center"
+            >
+                {{-- Icon --}}
+                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-5 rounded-full bg-amber-100 dark:bg-amber-500/10">
+                    <svg class="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    </svg>
+                </div>
+
+                <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-1">Session Timeout Warning</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-5">You've been inactive. You will be logged out in</p>
+
+                {{-- Countdown --}}
+                <div class="flex items-center justify-center gap-1 mb-6">
+                    <div class="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-3 min-w-[4rem]">
+                        <span class="text-3xl font-bold text-amber-500 tabular-nums" x-text="String(Math.floor(countdown / 60)).padStart(2, '0')">00</span>
+                    </div>
+                    <span class="text-2xl font-bold text-slate-400">:</span>
+                    <div class="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-3 min-w-[4rem]">
+                        <span class="text-3xl font-bold text-amber-500 tabular-nums" x-text="String(countdown % 60).padStart(2, '0')">00</span>
+                    </div>
+                </div>
+
+                {{-- Actions --}}
+                <div class="flex flex-col gap-3">
+                    <button
+                        @click="stayLoggedIn()"
+                        class="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors duration-200"
+                    >
+                        Stay Logged In
+                    </button>
+                    <button
+                        @click="logout()"
+                        class="w-full py-2.5 px-4 rounded-xl bg-transparent border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 text-sm font-medium transition-colors duration-200"
+                    >
+                        Logout Now
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <form id="idle-logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
+            @csrf
+        </form>
+    </div>
+    @endauth
+
+    <script>
+    function idleTimer() {
+        return {
+            showWarning: false,
+            countdown: 120,
+            idleTimeoutHandle: null,
+            countdownHandle: null,
+            idleMinutes: 25,
+
+            start() {
+                this.resetTimer();
+                ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(event => {
+                    document.addEventListener(event, () => this.onActivity(), { passive: true });
+                });
+            },
+
+            onActivity() {
+                if (this.showWarning) return;
+                this.resetTimer();
+            },
+
+            resetTimer() {
+                clearTimeout(this.idleTimeoutHandle);
+                this.idleTimeoutHandle = setTimeout(() => this.showIdleWarning(), this.idleMinutes * 60 * 1000);
+            },
+
+            showIdleWarning() {
+                this.showWarning = true;
+                this.countdown = 120;
+                this.countdownHandle = setInterval(() => {
+                    this.countdown--;
+                    if (this.countdown <= 0) {
+                        this.logout();
+                    }
+                }, 1000);
+            },
+
+            stayLoggedIn() {
+                this.showWarning = false;
+                clearInterval(this.countdownHandle);
+                this.resetTimer();
+            },
+
+            logout() {
+                clearInterval(this.countdownHandle);
+                document.getElementById('idle-logout-form').submit();
+            }
+        };
+    }
+    </script>
+
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         const themeToggle = document.getElementById('theme-toggle');
