@@ -35,6 +35,7 @@ class PasswordResetLinkController extends Controller
                 $request->only('email')
             );
         } catch (\Exception $e) {
+            error_log('MAIL ERROR: ' . get_class($e) . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
             Log::error('Password reset email failed: ' . $e->getMessage(), [
                 'exception' => $e,
             ]);
