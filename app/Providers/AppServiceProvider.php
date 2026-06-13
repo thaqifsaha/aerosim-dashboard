@@ -7,14 +7,13 @@ use App\Notifications\FlightScheduleBookedNotification;
 use App\Notifications\FlightScheduleCancelledNotification;
 use App\Notifications\FlightScheduleReminderNotification;
 use App\Models\FlightSchedule;
+use App\Mail\Transport\MailtrapApiTransport;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Validation\Rules\Password;
-use Symfony\Component\Mailer\Bridge\Mailtrap\Transport\MailtrapTransportFactory;
-use Symfony\Component\Mailer\Transport\Dsn;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,8 +30,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Mail::extend('mailtrap', function (array $config) {
-            return (new MailtrapTransportFactory())->create(Dsn::fromString($config['url'] ?? ''));
+        Mail::extend('mailtrap_api', function (array $config) {
+            return new MailtrapApiTransport(
+                apiToken: $config['api_token'] ?? '',
+                inboxId: (int) ($config['inbox_id'] ?? 0),
+                sandbox: filter_var($config['sandbox'] ?? true, FILTER_VALIDATE_BOOLEAN),
+            );
         });
 
         Password::defaults(fn () => Password::min(8)->mixedCase()->symbols());

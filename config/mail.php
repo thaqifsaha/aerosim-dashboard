@@ -37,9 +37,11 @@ return [
 
     'mailers' => [
 
-        'mailtrap' => [
-            'transport' => 'mailtrap',
-            'url' => env('MAILTRAP_DSN'),
+        'mailtrap_api' => [
+            'transport' => 'mailtrap_api',
+            'api_token' => env('MAILTRAP_API_TOKEN'),
+            'inbox_id' => env('MAILTRAP_INBOX_ID'),
+            'sandbox' => env('MAILTRAP_SANDBOX', true),
         ],
 
         'smtp' => [
