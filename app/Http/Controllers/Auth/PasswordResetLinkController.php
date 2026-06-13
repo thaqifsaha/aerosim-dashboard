@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
 
@@ -34,7 +35,9 @@ class PasswordResetLinkController extends Controller
                 $request->only('email')
             );
         } catch (\Exception $e) {
-            report($e);
+            Log::error('Password reset email failed: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
             return back()->with('status', __('passwords.sent'));
         }
 
