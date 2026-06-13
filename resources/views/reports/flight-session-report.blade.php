@@ -193,7 +193,7 @@
                     <div class="report-generated">Generated: {{ now()->format('d M Y, H:i') }}</div>
                 </td>
                 <td class="header-logo-cell">
-                    <img src="file://{{ public_path('images/aerosim_logo.jpg') }}" height="55" alt="AeroSim">
+                    <img src="file://{{ public_path('images/aerosim_logo.png') }}" height="55" alt="AeroSim">
                 </td>
             </tr>
         </table>

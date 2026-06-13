@@ -17,62 +17,107 @@
     </head>
     <body
         x-data="{ darkMode: localStorage.getItem('theme') !== 'light' }"
-        x-init="document.documentElement.classList.toggle('dark', darkMode)"
+        x-init="document.documentElement.classList.remove('dark')"
         class="font-sans m-0 text-gray-900 antialiased"
     >
         <div
             class="relative min-h-screen flex items-center justify-center
-            bg-cover bg-center bg-no-repeat transition-all duration-500"
-            :style="darkMode
-                ? `background-image: url('{{ asset('images/clouds-night.png') }}')`
-                : `background-image: url('{{ asset('images/clouds-day.png') }}')`"
+            bg-cover bg-center bg-no-repeat"
+            style="background-image: url('{{ asset('images/login-bg.jpg') }}')"
         >
 
-            <div class="absolute inset-0
-                bg-white/40 dark:bg-black/55
-                backdrop-blur-[2px]">
-            </div>
+            {{-- Navy gradient overlay: same on all guest auth pages --}}
+            <div class="absolute inset-0 bg-gradient-to-b from-[#0A1628]/65 via-[#0A1628]/35 to-[#0A1628]/80 pointer-events-none"></div>
 
-            {{-- Dark / Light Toggle --}}
-            <button
-                id="guest-theme-toggle"
-                type="button"
-                @click="
-                    darkMode = !darkMode;
-                    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
-                    document.documentElement.classList.toggle('dark', darkMode);
-                "
-                class="absolute top-6 right-6 z-20
-                    w-11 h-11 rounded-xl
-                    bg-white/80 dark:bg-gray-800/80
-                    backdrop-blur-md shadow-md
-                    flex items-center justify-center
-                    hover:scale-105 transition cursor-pointer
-                    border border-white/40 dark:border-white/10"
-                aria-label="Toggle dark mode"
-            >
-                {{-- Moon icon (shown in light mode) --}}
-                <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
-                </svg>
-                {{-- Sun icon (shown in dark mode) --}}
-                <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="5"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-                </svg>
-            </button>
+            @if(request()->routeIs('login'))
+                {{-- ── TAKEOFF TRANSITION OVERLAY ── --}}
+                <div id="takeoff-overlay"
+                     class="fixed inset-0 pointer-events-none"
+                     style="z-index: 9000; background: #0A1628; opacity: 0;
+                            transition: opacity 0.45s ease-in; will-change: opacity;">
+                    {{-- Plane + trailing light streak --}}
+                    <div id="takeoff-plane"
+                         style="position: absolute; top: 48%; left: -100px;
+                                opacity: 1; will-change: transform, opacity;">
+                        <div id="plane-trail"
+                             style="position: absolute; right: 100%; top: 50%;
+                                    transform: translateY(-50%);
+                                    width: 0; height: 3px;
+                                    background: linear-gradient(to left, rgba(0,191,255,0.75), transparent);
+                                    border-radius: 999px; opacity: 0;
+                                    transition: width 0.6s ease-out, opacity 0.15s ease-in;">
+                        </div>
+                        {{-- Side-view airplane SVG --}}
+                        <svg viewBox="0 0 120 60" width="90" height="45"
+                             fill="white" xmlns="http://www.w3.org/2000/svg"
+                             style="filter: drop-shadow(0 0 8px rgba(0,191,255,0.45));">
+                            <path d="M5 32 Q45 27 100 25 Q112 24.5 118 27 Q112 29.5 100 30.5 Q45 33.5 5 37 Z"/>
+                            <path d="M52 28 L74 8 L82 28 Z"/>
+                            <path d="M14 33 L26 26 L30 33 Z"/>
+                            <path d="M11 31.5 L19 18 L23 31.5 Z"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var form = document.querySelector('form[method="POST"]');
+                    if (!form) return;
+
+                    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+                    form.addEventListener('submit', function () {
+                        var overlay = document.getElementById('takeoff-overlay');
+                        var plane   = document.getElementById('takeoff-plane');
+                        var trail   = document.getElementById('plane-trail');
+                        var card    = document.getElementById('login-card');
+
+                        sessionStorage.setItem('fromLogin', '1');
+
+                        if (reduced) {
+                            if (overlay) { overlay.style.opacity = '1'; overlay.style.pointerEvents = 'all'; }
+                            return;
+                        }
+
+                        // Card scales down and fades out
+                        if (card) {
+                            card.style.transition = 'transform 0.3s ease-in, opacity 0.3s ease-in';
+                            card.style.transform  = 'scale(0.95) translateY(-8px)';
+                            card.style.opacity    = '0';
+                        }
+
+                        // Plane enters from the left edge, flies through the form, exits right
+                        if (plane) {
+                            plane.animate([
+                                { transform: 'translateX(0)     translateY(0)     scale(1)',    opacity: 1 },
+                                { transform: 'translateX(200vw) translateY(-150px) scale(1.05)', opacity: 1 }
+                            ], { duration: 4000, easing: 'cubic-bezier(0.15, 0.6, 0.4, 1)', fill: 'forwards' });
+                        }
+                        if (trail) { trail.style.width = '150px'; trail.style.opacity = '0.85'; }
+
+                        // Navy overlay fades in after the plane has crossed the form
+                        setTimeout(function () {
+                            if (overlay) {
+                                overlay.style.opacity       = '1';
+                                overlay.style.pointerEvents = 'all';
+                            }
+                        }, 250);
+                    });
+                });
+                </script>
+            @endif
 
             <img src="/images/plane-outline.png"
                 class="absolute opacity-10 w-[500px] left-[-120px] top-[30%]
                 pointer-events-none select-none"
                 alt="">
 
-            <div class="relative z-10 w-full sm:max-w-md px-6 py-5
+            <div id="login-card"
+                 class="relative z-10 w-full sm:max-w-md px-6 py-5
                         rounded-xl
-                        bg-white/70 dark:bg-white/5
+                        bg-sky-50 border border-sky-200
                         backdrop-blur-md
-                        border border-white/40 dark:border-white/10
-                        shadow-lg
+                        shadow-[0_20px_60px_-5px_rgba(0,0,0,0.5),0_8px_20px_-8px_rgba(0,0,0,0.4)]
                         transition">
 
                 <!-- LOGO INSIDE FORM -->

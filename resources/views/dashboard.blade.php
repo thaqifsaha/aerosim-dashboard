@@ -1,24 +1,22 @@
+<style>
+@keyframes pilot-glow {
+    0%, 100% { box-shadow: 0 0 0 1px rgba(34,197,94,0.35), 0 0 10px 2px rgba(34,197,94,0.12); }
+    50%       { box-shadow: 0 0 0 1px rgba(34,197,94,0.75), 0 0 22px 6px rgba(34,197,94,0.28); }
+}
+.active-pilot-glow { animation: pilot-glow 2.4s ease-in-out infinite; }
+</style>
+
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-
-            <div class="flex items-center gap-3">
-                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30">
-                    <svg class="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                    </svg>
-                </div>
-                <h2 class="text-xl font-bold tracking-widest text-slate-900 dark:text-white uppercase">
-                    Aviation Performance Dashboard
-                </h2>
+        <div class="flex items-center gap-3">
+            <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30">
+                <svg class="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
             </div>
-
-            <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
-                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Logged in as</span>
-                <span class="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">{{ ucfirst(auth()->user()->role) }}</span>
-            </div>
-
+            <h2 class="text-xl font-bold tracking-widest text-slate-900 dark:text-white uppercase">
+                Pilot Overview
+            </h2>
         </div>
     </x-slot>
 
@@ -30,34 +28,8 @@
 
                 <div class="mb-6">
 
-                    <!-- Section Header -->
-                    <div class="flex items-center gap-2 mb-5">
-                        <div class="w-1 h-5 bg-cyan-400 rounded-full"></div>
-                        <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-                            Pilot Overview
-                        </h3>
-                    </div>
-
-                    <!-- Active Pilot + Search Row -->
-                    <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-
-                        @if($activePilot)
-                            <div class="inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 backdrop-blur-sm">
-                                <span class="relative flex h-2.5 w-2.5">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
-                                </span>
-                                <span class="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider">Active Pilot</span>
-                                <span class="text-sm font-bold text-emerald-700 dark:text-emerald-300">{{ $activePilot->name }}</span>
-                            </div>
-                        @else
-                            <div class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
-                                <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                                </svg>
-                                <span class="text-xs text-slate-400 font-medium">No active pilot selected</span>
-                            </div>
-                        @endif
+                    <!-- Search Row -->
+                    <div class="mb-5 flex justify-end">
 
                         <!-- Search Form -->
                         <form method="GET" action="{{ route('dashboard') }}" class="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -94,22 +66,55 @@
                             <p class="text-sm text-slate-500 dark:text-slate-400">No pilots found.</p>
                         </div>
                     @else
+                        @php
+                            $sortedCards  = $pilotCards->sortByDesc(fn($p) => $activePilot && $p['id'] === $activePilot->id);
+                            $hasPinned    = $activePilot && $pilotCards->contains('id', $activePilot->id);
+                            $shownDivider = false;
+                            $pilotPhotos  = \App\Models\User::whereIn('id', $sortedCards->pluck('id')->toArray())
+                                ->whereNotNull('profile_photo')
+                                ->pluck('profile_photo', 'id');
+                        @endphp
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            @foreach($pilotCards as $pilot)
+                            @foreach($sortedCards as $pilot)
+                                @php $isActivePilot = $activePilot && $pilot['id'] === $activePilot->id; @endphp
+
+                                {{-- Divider before the first non-active card --}}
+                                @if($hasPinned && !$isActivePilot && !$shownDivider)
+                                    @php $shownDivider = true; @endphp
+                                    <div class="col-span-full flex items-center gap-3 py-1">
+                                        <div class="h-px flex-1 bg-slate-200 dark:bg-white/10"></div>
+                                        <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Other Pilots</span>
+                                        <div class="h-px flex-1 bg-slate-200 dark:bg-white/10"></div>
+                                    </div>
+                                @endif
+
                                 <a href="{{ route('pilots.show', $pilot['id']) }}"
-                                    class="group cursor-pointer block p-5 rounded-xl
-                                    bg-white/70 dark:bg-white/5
-                                    backdrop-blur-md
-                                    border border-slate-200/80 dark:border-white/10
-                                    shadow-sm hover:shadow-lg hover:shadow-cyan-500/5
-                                    hover:border-cyan-500/40 dark:hover:border-cyan-500/30
-                                    transition-all duration-200">
+                                    class="group cursor-pointer relative block p-5 rounded-xl backdrop-blur-md transition-all duration-200
+                                    {{ $isActivePilot
+                                        ? 'bg-green-50 dark:bg-green-950/20 border border-green-400/60 dark:border-green-500/40 shadow-sm active-pilot-glow hover:shadow-lg hover:shadow-green-500/10'
+                                        : 'bg-white/70 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 shadow-sm hover:shadow-lg hover:shadow-cyan-500/5 hover:border-cyan-500/40 dark:hover:border-cyan-500/30' }}">
+
+                                    {{-- ON DUTY badge --}}
+                                    @if($isActivePilot)
+                                        <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-500 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                                            ON DUTY
+                                        </span>
+                                    @endif
 
                                     <!-- Avatar + Info -->
                                     <div class="flex items-center gap-3 mb-4">
-                                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm select-none">
-                                            {{ strtoupper(substr($pilot['name'], 0, 2)) }}
-                                        </div>
+                                        @if($pilotPhotos->has($pilot['id']))
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden ring-1 ring-slate-200 dark:ring-white/10">
+                                                <img src="{{ asset('storage/' . $pilotPhotos->get($pilot['id'])) }}"
+                                                     alt="{{ $pilot['name'] }}"
+                                                     class="w-full h-full object-cover object-center">
+                                            </div>
+                                        @else
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm select-none">
+                                                {{ strtoupper(substr($pilot['name'], 0, 2)) }}
+                                            </div>
+                                        @endif
                                         <div class="min-w-0">
                                             <p class="text-sm font-bold text-slate-900 dark:text-white truncate">
                                                 {{ $pilot['name'] }}
@@ -126,19 +131,19 @@
                                     <div class="grid grid-cols-2 gap-2.5">
                                         <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-white/5">
                                             <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Sessions</p>
-                                            <p class="text-xl font-mono font-bold text-slate-900 dark:text-white">{{ $pilot['total_sessions'] }}</p>
+                                            <p class="text-xl font-mono font-bold text-slate-900 dark:text-white text-center">{{ $pilot['total_sessions'] }}</p>
                                         </div>
                                         <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-white/5">
                                             <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Avg Score</p>
-                                            <p class="text-xl font-mono font-bold text-slate-900 dark:text-white">{{ $pilot['average_score'] }}</p>
+                                            <p class="text-xl font-mono font-bold text-slate-900 dark:text-white text-center">{{ $pilot['average_score'] }}</p>
                                         </div>
                                         <div class="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20">
                                             <p class="text-xs text-emerald-600 dark:text-emerald-400 uppercase tracking-wide mb-1">Pass</p>
-                                            <p class="text-xl font-mono font-bold text-emerald-700 dark:text-emerald-400">{{ $pilot['pass_count'] }}</p>
+                                            <p class="text-xl font-mono font-bold text-emerald-700 dark:text-emerald-400 text-center">{{ $pilot['pass_count'] }}</p>
                                         </div>
                                         <div class="p-2.5 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20">
                                             <p class="text-xs text-red-500 dark:text-red-400 uppercase tracking-wide mb-1">Fail</p>
-                                            <p class="text-xl font-mono font-bold text-red-600 dark:text-red-400">{{ $pilot['fail_count'] }}</p>
+                                            <p class="text-xl font-mono font-bold text-red-600 dark:text-red-400 text-center">{{ $pilot['fail_count'] }}</p>
                                         </div>
                                     </div>
 

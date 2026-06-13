@@ -33,10 +33,60 @@
                     border-color 0.35s ease,
                     box-shadow 0.35s ease;
             }
+
+            /* Fixed background image — switches with dark mode, stays fixed on scroll */
+            body {
+                background-image: url('{{ asset("images/bg-light.jpg") }}');
+                background-attachment: fixed;
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-color: white;
+            }
+            html.dark body {
+                background-image: url('{{ asset("images/bg-dark.jpg") }}');
+                background-position: center;
+                background-color: #0A1628;
+            }
+
+            /* ── DASHBOARD ENTRANCE ANIMATION ── */
+            /* CSS forces the initial hidden state when the data attribute is present.
+               JS removes the attribute on DOMContentLoaded to trigger the transitions. */
+            html[data-from-login] #entrance-overlay {
+                opacity: 1 !important;
+                pointer-events: auto !important;
+            }
+            html[data-from-login] #main-content {
+                opacity: 0 !important;
+                transform: translateY(16px) !important;
+            }
+            #entrance-overlay {
+                transition: opacity 0.55s ease-out;
+            }
+            #main-content {
+                /* Include the global div transitions so bg-color etc. still animate */
+                transition:
+                    opacity          0.55s ease-out,
+                    transform        0.55s ease-out,
+                    background-color 0.35s ease,
+                    color            0.35s ease,
+                    border-color     0.35s ease,
+                    box-shadow       0.35s ease;
+            }
         </style>
     </head>
     <body class="font-sans antialiased bg-slate-50 dark:bg-[#060e1a]">
-        <div class="min-h-screen relative overflow-hidden bg-gradient-to-b from-slate-100 via-white to-white dark:from-[#0A1628] dark:via-[#0a1628] dark:to-[#060e1a]">
+
+        {{-- Entrance overlay: navy screen that covers everything on page load after login --}}
+        <div id="entrance-overlay"
+             class="fixed inset-0 pointer-events-none"
+             style="z-index: 999; background: #0A1628; opacity: 0; will-change: opacity;">
+        </div>
+        {{-- Synchronous: set data attribute NOW so CSS immediately forces the overlay visible
+             and the content invisible before the browser renders anything --}}
+        <script>if (sessionStorage.getItem('fromLogin') === '1') { document.documentElement.dataset.fromLogin = '1'; }</script>
+
+        <div class="min-h-screen relative overflow-hidden bg-gradient-to-b from-slate-100/40 via-white/40 to-white/40 dark:from-[#0A1628]/40 dark:via-[#0a1628]/40 dark:to-[#060e1a]/40">
 
             <div class="pointer-events-none fixed inset-0 z-0 opacity-40 dark:opacity-20">
                 <div class="absolute top-20 left-10 w-72 h-72 bg-white/50 dark:bg-blue-500/10 rounded-full blur-3xl"></div>
@@ -45,6 +95,7 @@
             </div>
 
             <div
+                id="main-content"
                 class="relative z-10"
                 x-data="{
                     sidebarOpen: false,
@@ -210,6 +261,29 @@
             }
         };
     }
+    </script>
+
+    <script>
+    /* ── DASHBOARD ENTRANCE ANIMATION ── */
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.documentElement.dataset.fromLogin !== '1') return;
+        sessionStorage.removeItem('fromLogin');
+
+        var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (reduced) {
+            /* Instantly remove overlay with no animation */
+            delete document.documentElement.dataset.fromLogin;
+            return;
+        }
+
+        /* One requestAnimationFrame: the browser has already committed the first
+           paint (navy overlay covering content). Removing the data attribute here
+           lets CSS transitions animate overlay→transparent, content→visible. */
+        requestAnimationFrame(function () {
+            delete document.documentElement.dataset.fromLogin;
+        });
+    });
     </script>
 
     <script>

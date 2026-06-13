@@ -151,124 +151,115 @@
                     </div>
 
                     <div class="p-6">
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-5">
 
-                            <div class="p-4 rounded-xl bg-blue-50/80 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20">
-                                <p class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2">Control Smoothness</p>
-                                <p class="font-mono text-2xl font-bold text-blue-700 dark:text-blue-300 tracking-widest">{{ $session->dssResult->control_smoothness_score }}</p>
+                        {{-- Score grid: centered, max-w-3xl --}}
+                        <div class="max-w-3xl mx-auto">
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+
+                                <div class="p-3 rounded-xl bg-blue-50/80 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20">
+                                    <p class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2">Control Smoothness</p>
+                                    <p class="font-mono text-2xl font-bold text-blue-700 dark:text-blue-300 tracking-widest text-center">{{ $session->dssResult->control_smoothness_score }}</p>
+                                </div>
+
+                                <div class="p-3 rounded-xl bg-cyan-50/80 dark:bg-cyan-500/10 border border-cyan-100 dark:border-cyan-500/20">
+                                    <p class="text-xs font-semibold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider mb-2">Altitude Accuracy</p>
+                                    <p class="font-mono text-2xl font-bold text-cyan-700 dark:text-cyan-300 tracking-widest text-center">{{ $session->dssResult->altitude_accuracy_score }}</p>
+                                </div>
+
+                                <div class="p-3 rounded-xl bg-violet-50/80 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20">
+                                    <p class="text-xs font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider mb-2">Total Score</p>
+                                    <p class="font-mono text-2xl font-bold text-violet-700 dark:text-violet-300 tracking-widest text-center">{{ $session->dssResult->total_score }}</p>
+                                </div>
+
+                                <div class="p-3 rounded-xl bg-orange-50/80 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20">
+                                    <p class="text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider mb-2">Safety Score</p>
+                                    <p class="font-mono text-2xl font-bold text-orange-700 dark:text-orange-300 tracking-widest text-center">{{ $session->dssResult->safety_score }}</p>
+                                </div>
+
+                                <div class="p-3 rounded-xl bg-amber-50/80 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20">
+                                    <p class="text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2">Airspeed Accuracy</p>
+                                    <p class="font-mono text-2xl font-bold text-amber-700 dark:text-amber-300 tracking-widest text-center">{{ $session->dssResult->airspeed_accuracy_score }}</p>
+                                </div>
+
+                                <div class="p-3 rounded-xl {{ $session->dssResult->pass_fail === 'PASS'
+                                    ? 'bg-emerald-50/80 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20'
+                                    : 'bg-red-50/80 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20' }}">
+                                    <p class="text-xs font-semibold uppercase tracking-wider mb-2 {{ $session->dssResult->pass_fail === 'PASS' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">Result</p>
+                                    <p class="text-3xl font-bold text-center {{ $session->dssResult->pass_fail === 'PASS' ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300' }}">
+                                        {{ $session->dssResult->pass_fail }}
+                                    </p>
+                                </div>
+
                             </div>
-
-                            <div class="p-4 rounded-xl bg-cyan-50/80 dark:bg-cyan-500/10 border border-cyan-100 dark:border-cyan-500/20">
-                                <p class="text-xs font-semibold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider mb-2">Altitude Accuracy</p>
-                                <p class="font-mono text-2xl font-bold text-cyan-700 dark:text-cyan-300 tracking-widest">{{ $session->dssResult->altitude_accuracy_score }}</p>
-                            </div>
-
-                            <div class="p-4 rounded-xl bg-amber-50/80 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20">
-                                <p class="text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2">Airspeed Accuracy</p>
-                                <p class="font-mono text-2xl font-bold text-amber-700 dark:text-amber-300 tracking-widest">{{ $session->dssResult->airspeed_accuracy_score }}</p>
-                            </div>
-
-                            <div class="p-4 rounded-xl bg-orange-50/80 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20">
-                                <p class="text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider mb-2">Safety Score</p>
-                                <p class="font-mono text-2xl font-bold text-orange-700 dark:text-orange-300 tracking-widest">{{ $session->dssResult->safety_score }}</p>
-                            </div>
-
-                            <div class="p-4 rounded-xl bg-violet-50/80 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20">
-                                <p class="text-xs font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider mb-2">Total Score</p>
-                                <p class="font-mono text-2xl font-bold text-violet-700 dark:text-violet-300 tracking-widest">{{ $session->dssResult->total_score }}</p>
-                            </div>
-
-                            <div class="p-4 rounded-xl {{ $session->dssResult->pass_fail === 'PASS'
-                                ? 'bg-emerald-50/80 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20'
-                                : 'bg-red-50/80 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20' }}">
-                                <p class="text-xs font-semibold uppercase tracking-wider mb-2 {{ $session->dssResult->pass_fail === 'PASS' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">Result</p>
-                                <p class="text-2xl font-bold {{ $session->dssResult->pass_fail === 'PASS' ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300' }}">
-                                    {{ $session->dssResult->pass_fail }}
-                                </p>
-                            </div>
-
                         </div>
 
-                        <div class="pt-4 border-t border-slate-100 dark:border-white/10">
-                            <p class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Decision Reason</p>
-                            <p class="text-sm text-slate-700 dark:text-slate-300">{{ $session->dssResult->decision_reason }}</p>
+                        {{-- Divider + Flight Events --}}
+                        <div class="mt-6 pt-5 border-t border-slate-100 dark:border-white/10">
+                            <p class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Flight Events</p>
+                            <div class="flex gap-2.5 flex-wrap justify-center">
+                                @if(optional($session->dssResult)->excessive_g_event)
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-red-500 dark:bg-red-600 text-white">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                        Excessive G-Force
+                                    </span>
+                                @endif
+
+                                @if(optional($session->dssResult)->hard_landing_event)
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-orange-500 dark:bg-orange-600 text-white">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                        Hard Landing
+                                    </span>
+                                @endif
+
+                                @if(optional($session->dssResult)->stall_event)
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-black">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                        Stall Detected
+                                    </span>
+                                @endif
+
+                                @if(optional($session->dssResult)->unstable_flight_event)
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-violet-600 text-white">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                        Unstable Flight
+                                    </span>
+                                @endif
+
+                                @if(optional($session->dssResult)->overbank_event)
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-orange-600 text-white">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                        Overbank Warning
+                                    </span>
+                                @endif
+
+                                @if(optional($session->dssResult)->crash_event)
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white
+                                        {{ optional($session->dssResult)->crash_severity === 'Severe' ? 'bg-red-800' :
+                                        (optional($session->dssResult)->crash_severity === 'Major' ? 'bg-red-600' : 'bg-orange-600') }}">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                        Crash Detected
+                                        @if(optional($session->dssResult)->crash_severity)
+                                            — {{ optional($session->dssResult)->crash_severity }}
+                                        @endif
+                                    </span>
+                                @endif
+
+                                @if(
+                                    !optional($session->dssResult)->excessive_g_event &&
+                                    !optional($session->dssResult)->hard_landing_event &&
+                                    !optional($session->dssResult)->stall_event &&
+                                    !optional($session->dssResult)->crash_event &&
+                                    !optional($session->dssResult)->unstable_flight_event &&
+                                    !optional($session->dssResult)->overbank_event
+                                )
+                                    <p class="text-sm text-slate-400 dark:text-slate-500">No events detected</p>
+                                @endif
+                            </div>
                         </div>
+
                     </div>
                 </div>
             @endif
-
-            {{-- ===== FLIGHT EVENTS ===== --}}
-            <div class="rounded-xl bg-white/70 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 shadow-sm p-5">
-                <div class="flex items-center gap-2 mb-4">
-                    <div class="w-1 h-5 bg-cyan-400 rounded-full"></div>
-                    <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-                        Flight Events
-                    </h3>
-                </div>
-
-                <div class="flex gap-2.5 flex-wrap">
-                    @if(optional($session->dssResult)->excessive_g_event)
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-red-500 dark:bg-red-600 text-white">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                            Excessive G-Force
-                        </span>
-                    @endif
-
-                    @if(optional($session->dssResult)->hard_landing_event)
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-orange-500 dark:bg-orange-600 text-white">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                            Hard Landing
-                        </span>
-                    @endif
-
-                    @if(optional($session->dssResult)->stall_event)
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-black">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                            Stall Detected
-                        </span>
-                    @endif
-
-                    @if(optional($session->dssResult)->unstable_flight_event)
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-violet-600 text-white">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                            Unstable Flight
-                        </span>
-                    @endif
-
-                    @if(optional($session->dssResult)->overbank_event)
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-orange-600 text-white">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                            Overbank Warning
-                        </span>
-                    @endif
-
-                    @if(optional($session->dssResult)->crash_event)
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white
-                            {{ optional($session->dssResult)->crash_severity === 'Severe' ? 'bg-red-800' :
-                            (optional($session->dssResult)->crash_severity === 'Major' ? 'bg-red-600' : 'bg-orange-600') }}">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                            Crash Detected
-                            @if(optional($session->dssResult)->crash_severity)
-                                — {{ optional($session->dssResult)->crash_severity }}
-                            @endif
-                        </span>
-                    @endif
-
-                    @if(
-                        !optional($session->dssResult)->excessive_g_event &&
-                        !optional($session->dssResult)->hard_landing_event &&
-                        !optional($session->dssResult)->stall_event &&
-                        !optional($session->dssResult)->crash_event &&
-                        !optional($session->dssResult)->unstable_flight_event &&
-                        !optional($session->dssResult)->overbank_event
-                    )
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-500 dark:bg-emerald-600 text-white">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            No Issues Detected
-                        </span>
-                    @endif
-                </div>
-            </div>
 
             {{-- ===== FLIGHT CHARTS ===== --}}
             <div class="rounded-xl bg-white/70 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden">
@@ -389,14 +380,25 @@
                             <div class="w-1 h-5 bg-cyan-400 rounded-full"></div>
                             <h3 id="modalTitle" class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider"></h3>
                         </div>
-                        <button onclick="closeChartModal()"
-                            class="cursor-pointer w-8 h-8 flex items-center justify-center rounded-lg
-                                bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10
-                                text-slate-600 dark:text-slate-300 transition-colors duration-200">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <button onclick="resetModalZoom()"
+                                title="Reset zoom to full view"
+                                class="cursor-pointer px-2.5 py-1.5 text-xs font-semibold rounded-lg
+                                    bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15
+                                    text-slate-600 dark:text-slate-300
+                                    border border-slate-200 dark:border-white/10
+                                    transition-colors duration-200">
+                                Reset Zoom
+                            </button>
+                            <button onclick="closeChartModal()"
+                                class="cursor-pointer w-8 h-8 flex items-center justify-center rounded-lg
+                                    bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10
+                                    text-slate-600 dark:text-slate-300 transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="relative h-[500px]">
                         <canvas id="modalChart"></canvas>
@@ -427,6 +429,8 @@
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
 
 <script>
     const chartInstances = {};
@@ -920,7 +924,33 @@
         };
     }
 
+        // Inject zoom/pan into the modal chart only — not applied to inline charts
+        if (chartConfig && typeof ChartZoom !== 'undefined') {
+            chartConfig.plugins = [ChartZoom];
+            chartConfig.options.plugins = chartConfig.options.plugins || {};
+            chartConfig.options.plugins.zoom = {
+                pan: {
+                    enabled: true,
+                    mode: 'x'
+                },
+                zoom: {
+                    wheel:  { enabled: true },
+                    pinch:  { enabled: true },
+                    mode:   'x'
+                },
+                limits: {
+                    x: { min: 'original', max: 'original', minRange: 10 }
+                }
+            };
+        }
+
         modalChartInstance = new Chart(modalCanvas, chartConfig);
+    }
+
+    function resetModalZoom() {
+        if (modalChartInstance) {
+            modalChartInstance.resetZoom();
+        }
     }
 
     function closeChartModal() {

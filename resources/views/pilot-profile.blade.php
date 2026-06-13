@@ -128,7 +128,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-2xl font-mono font-bold text-slate-900 dark:text-white">{{ $totalSessions }}</p>
+                        <p class="text-7xl font-mono font-bold text-slate-900 dark:text-white text-center">{{ $totalSessions }}</p>
                     </div>
 
                     <div class="p-5 rounded-xl bg-white/70 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 shadow-sm">
@@ -140,7 +140,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-2xl font-mono font-bold text-slate-900 dark:text-white">{{ $averageScore }}</p>
+                        <p class="text-7xl font-mono font-bold text-slate-900 dark:text-white text-center">{{ $averageScore }}</p>
                     </div>
 
                     <div class="p-5 rounded-xl bg-emerald-50/80 dark:bg-emerald-500/10 backdrop-blur-md border border-emerald-200/60 dark:border-emerald-500/20 shadow-sm">
@@ -152,7 +152,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-2xl font-mono font-bold text-emerald-700 dark:text-emerald-400">{{ $passCount }}</p>
+                        <p class="text-7xl font-mono font-bold text-emerald-700 dark:text-emerald-400 text-center">{{ $passCount }}</p>
                     </div>
 
                     <div class="p-5 rounded-xl bg-red-50/80 dark:bg-red-500/10 backdrop-blur-md border border-red-200/60 dark:border-red-500/20 shadow-sm">
@@ -164,7 +164,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-2xl font-mono font-bold text-red-700 dark:text-red-400">{{ $failCount }}</p>
+                        <p class="text-7xl font-mono font-bold text-red-700 dark:text-red-400 text-center">{{ $failCount }}</p>
                     </div>
 
                 </div>

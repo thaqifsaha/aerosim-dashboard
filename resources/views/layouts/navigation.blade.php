@@ -11,33 +11,54 @@
 <nav class="relative z-50">
     <!-- Top Bar -->
     <div class="fixed inset-x-0 top-0 z-50 h-16 bg-white/80 dark:bg-[#0A1628]/80 backdrop-blur-xl border-b border-slate-200/40 dark:border-white/10">
-        <div class="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div class="flex h-full items-center justify-between pr-4 sm:pr-6 lg:pr-8">
 
-            <!-- Left: Hamburger + Logo -->
-            <div class="flex items-center gap-3">
-                <button
-                    type="button"
-                    @click="toggleSidebar()"
-                    class="cursor-pointer w-10 h-10 flex items-center justify-center rounded-lg
-                        bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10
-                        text-slate-700 dark:text-slate-300
-                        hover:bg-slate-200 dark:hover:bg-white/10
-                        focus:outline-none transition-colors duration-200"
-                    aria-label="Toggle sidebar">
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
+            <!-- Left: Hamburger (sidebar-aligned) + Logo + Dashboard Title -->
+            <div class="flex items-center min-w-0">
 
-                <a href="{{ route('dashboard') }}" class="flex items-center">
-                    <img src="{{ asset('images/company_logo.png') }}"
-                        alt="Company Logo"
-                        class="h-20 w-auto object-contain opacity-90 hover:opacity-100 transition dark:brightness-90">
-                </a>
+                <!-- Hamburger wrapper: matches collapsed sidebar width (sm:w-20 = 80px) so its right edge lines up with the sidebar's right border -->
+                <div class="flex items-center justify-center shrink-0 pl-4 sm:pl-0 sm:w-20">
+                    <button
+                        type="button"
+                        @click="toggleSidebar()"
+                        class="cursor-pointer shrink-0 w-10 h-10 flex items-center justify-center rounded-lg
+                            bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10
+                            text-slate-700 dark:text-slate-300
+                            hover:bg-slate-200 dark:hover:bg-white/10
+                            focus:outline-none transition-colors duration-200"
+                        aria-label="Toggle sidebar">
+                        <svg class="block h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Logo + Dashboard Title -->
+                <div class="flex items-center gap-3 min-w-0">
+                    <a href="{{ route('dashboard') }}" class="flex items-center shrink-0">
+                        <img src="{{ asset('images/company_logo.png') }}"
+                            alt="Company Logo"
+                            class="h-14 w-auto object-contain opacity-90 hover:opacity-100 transition dark:brightness-90">
+                    </a>
+
+                    @auth
+                    <span class="hidden sm:block text-sm font-bold tracking-wider text-slate-900 dark:text-white uppercase whitespace-nowrap">
+                        Aviation Performance Dashboard
+                    </span>
+                    @endauth
+                </div>
             </div>
 
-            <!-- Right: Notifications + Theme Toggle -->
-            <div class="flex items-center gap-2">
+            <!-- Right: Logged In Badge + Notifications + Theme Toggle -->
+            <div class="flex items-center gap-2 shrink-0">
+
+                @auth
+                <div class="hidden md:flex items-center gap-2 px-3 py-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Logged in as:</span>
+                    <span class="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">{{ ucfirst(auth()->user()->role) }}</span>
+                </div>
+                @endauth
 
                 <!-- Notification Bell -->
                 <x-dropdown align="right" width="w-80" contentClasses="py-0">

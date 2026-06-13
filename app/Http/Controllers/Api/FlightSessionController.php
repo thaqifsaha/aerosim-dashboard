@@ -83,11 +83,31 @@ class FlightSessionController extends Controller
         $avgAileron = $flightData->avg(fn($row) => abs($row->aileron_deflection));
         $avgRudder = $flightData->avg(fn($row) => abs($row->rudder_deflection));
 
-        $avgAltitude = $flightData->avg('altitude');
-        $avgAirspeed = $flightData->avg('indicated_airspeed');
+        // Phase segmentation
+        // Cruise: level flight above ground (|vertical_speed| < 200 fpm, altitude >= 50 ft)
+        // Airborne: any frame off the ground or above taxi speed
+        $cruiseFrames   = $flightData->filter(fn($r) => abs($r->vertical_speed) < 200 && $r->altitude >= 50);
+        $airborneFrames = $flightData->filter(fn($r) => $r->altitude >= 50 || $r->indicated_airspeed > 50);
 
-        $altitudeDeviation = $flightData->avg(fn($row) => abs($row->altitude - $avgAltitude));
-        $airspeedDeviation = $flightData->avg(fn($row) => abs($row->indicated_airspeed - $avgAirspeed));
+        // Altitude accuracy: only during cruise — climbs/descents are excluded
+        if ($cruiseFrames->count() >= 5) {
+            $avgCruiseAltitude = $cruiseFrames->avg('altitude');
+            $altitudeDeviation = $cruiseFrames->avg(fn($r) => abs($r->altitude - $avgCruiseAltitude));
+        } else {
+            // Not enough level flight data — fall back to session mean
+            $avgAltitude       = $flightData->avg('altitude');
+            $altitudeDeviation = $flightData->avg(fn($r) => abs($r->altitude - $avgAltitude));
+        }
+
+        // Airspeed accuracy: only while airborne — ground roll is excluded
+        if ($airborneFrames->count() >= 5) {
+            $avgAirborneAirspeed = $airborneFrames->avg('indicated_airspeed');
+            $airspeedDeviation   = $airborneFrames->avg(fn($r) => abs($r->indicated_airspeed - $avgAirborneAirspeed));
+        } else {
+            // Not enough airborne data — fall back to session mean
+            $avgAirspeed       = $flightData->avg('indicated_airspeed');
+            $airspeedDeviation = $flightData->avg(fn($r) => abs($r->indicated_airspeed - $avgAirspeed));
+        }
 
         $maxG = $flightData->max('g_force');
         $minAirspeed = $flightData->min('indicated_airspeed');
