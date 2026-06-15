@@ -63,3 +63,9 @@
 .dark .hud-title.animate-hud {
     animation: hud-pulse 2.5s infinite ease-in-out;
 }
+
+/* Native time/date input controls (clock icon, AM/PM spinner) in dark mode */
+.dark input[type="time"] {
+    color-scheme: dark;
+    color: white;
+}

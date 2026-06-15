@@ -114,18 +114,63 @@
 
                             <label class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider whitespace-nowrap">Aircraft Type</label>
 
-                            <select name="aircraft_type"
-                                    onchange="this.form.submit()"
-                                    class="cursor-pointer bg-white dark:bg-white/5 text-slate-800 dark:text-white
-                                           border border-slate-200 dark:border-white/10
-                                           rounded-lg px-3 py-2 text-sm w-52
-                                           focus:outline-none focus:ring-2 focus:ring-cyan-500/40
-                                           transition-colors duration-200">
-                                <option value="X-Plane 11" {{ $session->aircraft_type == 'X-Plane 11' ? 'selected' : '' }}>Choose Aircraft</option>
-                                <option value="Boeing 737-800" {{ $session->aircraft_type == 'Boeing 737-800' ? 'selected' : '' }}>Boeing 737-800</option>
-                                <option value="Boeing 747-400" {{ $session->aircraft_type == 'Boeing 747-400' ? 'selected' : '' }}>Boeing 747-400</option>
-                                <option value="MD-82" {{ $session->aircraft_type == 'MD-82' ? 'selected' : '' }}>MD-82</option>
-                            </select>
+                            <div x-data="sessionAircraftDropdown()" class="relative">
+                                <input type="hidden" name="aircraft_type" :value="selectedId">
+
+                                <button type="button" x-ref="btn" @click="toggleOpen()"
+                                    class="cursor-pointer rounded-lg border border-slate-200 dark:border-white/10
+                                        bg-white dark:bg-slate-800
+                                        text-slate-800 dark:text-slate-100
+                                        px-3 py-2 text-sm w-52
+                                        flex items-center justify-between gap-2
+                                        focus:outline-none focus:ring-2 focus:ring-cyan-500/40
+                                        transition-colors duration-200">
+                                    <span x-text="selectedLabel" class="truncate text-left"></span>
+                                    <svg class="w-4 h-4 shrink-0 text-slate-400 transition-transform duration-200"
+                                         :class="open ? 'rotate-180' : ''"
+                                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
+
+                                <!-- Teleported to <body> so the overflow-hidden card cannot clip it -->
+                                <template x-teleport="body">
+                                    <div>
+                                        <!-- Backdrop: transparent, catches clicks outside the panel -->
+                                        <div x-show="open"
+                                             class="fixed inset-0"
+                                             style="z-index:9998;display:none;"
+                                             @click="open = false"></div>
+
+                                        <!-- Dropdown panel: position:fixed, coords set by toggleOpen() -->
+                                        <div x-show="open"
+                                             x-transition:enter="transition ease-out duration-100"
+                                             x-transition:enter-start="opacity-0 scale-95"
+                                             x-transition:enter-end="opacity-100 scale-100"
+                                             x-transition:leave="transition ease-in duration-75"
+                                             x-transition:leave-start="opacity-100 scale-100"
+                                             x-transition:leave-end="opacity-0 scale-95"
+                                             :style="`position:fixed;top:${dropdownTop}px;left:${dropdownLeft}px;width:${dropdownWidth}px;z-index:9999;display:none;`"
+                                             class="rounded-lg border border-slate-200 dark:border-white/10
+                                                bg-white dark:bg-slate-800 shadow-xl overflow-hidden"
+                                             @click.stop>
+                                            <div class="overflow-y-auto max-h-48">
+                                                <template x-for="option in options" :key="option.id">
+                                                    <div @click="select(option)"
+                                                        class="px-3 py-2.5 text-sm cursor-pointer transition-colors
+                                                            text-slate-700 dark:text-slate-200
+                                                            hover:bg-slate-50 dark:hover:bg-white/10"
+                                                        :class="option.id === selectedId
+                                                            ? 'bg-cyan-50 dark:bg-cyan-500/10 !text-cyan-700 dark:!text-cyan-300 font-medium'
+                                                            : ''">
+                                                        <span x-text="option.label"></span>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
                         </form>
                     </div>
 
@@ -411,6 +456,42 @@
         </div>
     </div>
 </x-app-layout>
+<script>
+function sessionAircraftDropdown() {
+    const currentId = @json($session->aircraft_type ?? '');
+    const options = [
+        { id: 'X-Plane 11',     label: 'Choose Aircraft' },
+        { id: 'Boeing 737-800', label: 'Boeing 737-800' },
+        { id: 'Boeing 747-400', label: 'Boeing 747-400' },
+        { id: 'MD-82',          label: 'MD-82' },
+    ];
+    const found = options.find(o => o.id === currentId);
+    return {
+        open:          false,
+        selectedId:    currentId,
+        selectedLabel: found ? found.label : 'Choose Aircraft',
+        options:       options,
+        dropdownTop:   0,
+        dropdownLeft:  0,
+        dropdownWidth: 0,
+        toggleOpen() {
+            this.open = !this.open;
+            if (this.open) {
+                const rect = this.$refs.btn.getBoundingClientRect();
+                this.dropdownTop   = rect.bottom + 4;
+                this.dropdownLeft  = rect.left;
+                this.dropdownWidth = rect.width;
+            }
+        },
+        select(option) {
+            this.selectedId    = option.id;
+            this.selectedLabel = option.label;
+            this.open          = false;
+            this.$nextTick(() => this.$el.closest('form').submit());
+        },
+    };
+}
+</script>
 <script>
     const flightData = @json($chartData);
 
@@ -972,7 +1053,8 @@ document.addEventListener('click', async function (e) {
     e.preventDefault();
 
     try {
-        const response = await fetch(link.href, {
+        const { pathname, search } = new URL(link.href);
+        const response = await fetch(pathname + search, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
