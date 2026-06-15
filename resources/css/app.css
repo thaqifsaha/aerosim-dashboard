@@ -64,8 +64,10 @@
     animation: hud-pulse 2.5s infinite ease-in-out;
 }
 
-/* Native time/date input controls (clock icon, AM/PM spinner) in dark mode */
-.dark input[type="time"] {
+/* Native date/time input controls (calendar/clock icons, spinners) in dark mode */
+.dark input[type="date"],
+.dark input[type="time"],
+.dark input[type="datetime-local"] {
     color-scheme: dark;
     color: white;
 }

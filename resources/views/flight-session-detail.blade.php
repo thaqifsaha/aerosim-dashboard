@@ -106,7 +106,7 @@
                         </div>
 
                         {{-- AIRCRAFT DROPDOWN --}}
-                        <form method="POST"
+                        <form id="aircraft-form" method="POST"
                             action="{{ route('flight-sessions.update-aircraft', $session->id) }}"
                             class="sm:col-span-2 flex items-center gap-3">
                             @csrf
@@ -176,7 +176,8 @@
 
                     {{-- RIGHT: Aircraft Image --}}
                     <div class="hidden md:flex items-center justify-end">
-                        <img src="{{ asset('images/aircraft/' . $aircraftImage) }}"
+                        <img id="aircraft-image"
+                            src="{{ asset('images/aircraft/' . $aircraftImage) }}"
                             class="w-80 h-44 object-contain drop-shadow-md translate-x-[-100px]"
                             alt="{{ $session->aircraft_type ?? 'Aircraft' }}">
                     </div>
@@ -458,7 +459,9 @@
 </x-app-layout>
 <script>
 function sessionAircraftDropdown() {
-    const currentId = @json($session->aircraft_type ?? '');
+    const currentId      = @json($session->aircraft_type ?? '');
+    const imageBaseUrl   = @json(asset('images/aircraft'));
+    const aircraftImages = @json($aircraftImages);
     const options = [
         { id: 'X-Plane 11',     label: 'Choose Aircraft' },
         { id: 'Boeing 737-800', label: 'Boeing 737-800' },
@@ -487,7 +490,11 @@ function sessionAircraftDropdown() {
             this.selectedId    = option.id;
             this.selectedLabel = option.label;
             this.open          = false;
-            this.$nextTick(() => this.$el.closest('form').submit());
+            const img = document.getElementById('aircraft-image');
+            if (img && aircraftImages[option.id]) {
+                img.src = imageBaseUrl + '/' + aircraftImages[option.id];
+            }
+            this.$nextTick(() => document.getElementById('aircraft-form').submit());
         },
     };
 }
