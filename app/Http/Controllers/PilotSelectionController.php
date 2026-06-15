@@ -18,7 +18,17 @@ class PilotSelectionController extends Controller
         $pilots = User::where('role', 'pilot')->get();
         $setting = SystemSetting::first();
 
-        return view('pilot-selection', compact('pilots', 'setting'));
+        $pilotOptions = collect([['id' => '', 'label' => '-- None --']])
+            ->merge(
+                $pilots->map(fn($p) => [
+                    'id'    => (string) $p->id,
+                    'label' => $p->name . ' (' . $p->email . ')',
+                ])
+            )
+            ->values()
+            ->toArray();
+
+        return view('pilot-selection', compact('pilots', 'setting', 'pilotOptions'));
     }
 
     public function update(Request $request)
